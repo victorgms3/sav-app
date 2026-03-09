@@ -13,8 +13,11 @@
       color: green;
     }
     .admin-only {
-      background: purple;
+      background: rgb(3, 145, 171);
         color: white;
+        border-radius: 15px;
+        padding: 5px 10px;
+        border: none;
     }
   }
 }

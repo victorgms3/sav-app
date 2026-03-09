@@ -1,0 +1,20 @@
+.subscribe-container {
+  display: flex;
+  justify-content: center;
+  padding: 50px 20px;
+}
+
+.form-grid {
+  background: var(--white);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 600px;
+}
+
+.form-header {
+  border-bottom: 2px solid var(--beige-light);
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+}

@@ -7,13 +7,11 @@
     border-left: solid 1px var(--green-charter);
     border-right: solid 1px var(--green-charter);
     .nav-link {
-      color: white;
+      color: rgb(0, 0, 0);
     }
-
     .active {
       color: var(--green-charter);
     }
-
     .admin-only {
       background: var(--purple-charter);
     }
@@ -23,7 +21,6 @@
   gap: 0px; /* Supprime l'espace entre les éléments */
   margin: 2px;
 }
-
 .navbar-toggler {
   width: 55px;
   background-color: var(--purple-charter);

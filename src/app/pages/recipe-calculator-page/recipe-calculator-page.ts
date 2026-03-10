@@ -3,9 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Ingredient } from '../../models/ingredient.model';
-import { Recette, Resultat } from '../../models/recette.model';
+import { Recette } from '../../models/recette.model';
 import { IngredientService } from '../../services/ingredient.service';
-import { RecetteFormDTO, RecetteService } from '../../services/Recette.service';
+import { LigneIngredientFormDTO, RecetteFormDTO, RecetteService } from '../../services/Recette.service';
 
 interface LigneForm {
   ingredient: Ingredient | null;
@@ -21,19 +21,19 @@ interface LigneForm {
 })
 export class RecipeCalculatorPage implements OnInit {
 
-  // ── Mode ────────────────────────────────────────────────────
+  // ── Mode ─────────────────────────────────────────────────────
   editId: number | null = null;
   get isEdit(): boolean { return this.editId !== null; }
 
-  // ── Formulaire ──────────────────────────────────────────────
+  // ── Formulaire ───────────────────────────────────────────────
   titre: string = '';
   description: string = '';
   surgraissage: number = 5;
   avecSoude: boolean = true;
-  concentrationAlcali: number = 30;
+  concentrationAlcalin: number = 30;   // ⚠️ nom identique au DTO Kotlin
   lignes: LigneForm[] = [];
 
-  // ── Données ─────────────────────────────────────────────────
+  // ── Données ──────────────────────────────────────────────────
   allIngredients: Ingredient[] = [];
   recetteCalculee: Recette | null = null;
 
@@ -62,7 +62,7 @@ export class RecipeCalculatorPage implements OnInit {
     }
   }
 
-  // ── Chargement des données ───────────────────────────────────
+  // ── Chargement ───────────────────────────────────────────────
 
   loadIngredients(): void {
     this.isLoadingIngredients = true;
@@ -82,11 +82,12 @@ export class RecipeCalculatorPage implements OnInit {
     this.isLoadingRecette = true;
     this.recetteService.getRecetteById(id).subscribe({
       next: (recette) => {
-        this.titre = recette.titre;
-        this.description = recette.description ?? '';
-        this.surgraissage = recette.surgraissage;
-        this.avecSoude = recette.avecSoude;
-        this.concentrationAlcali = recette.concentrationAlcali;
+        this.titre              = recette.titre;
+        this.description        = recette.description ?? '';
+        this.surgraissage       = recette.surgraissage;
+        this.avecSoude          = recette.avecSoude;
+        // Le champ retourné par l'API peut s'appeler concentrationAlcali ou concentrationAlcalin
+        this.concentrationAlcalin = (recette as any).concentrationAlcalin ?? recette.concentrationAlcali ?? 30;
         this.lignes = recette.ligneIngredients.map(l => ({
           ingredient: l.ingredient,
           ingredientId: l.ingredient.id,
@@ -102,7 +103,7 @@ export class RecipeCalculatorPage implements OnInit {
     });
   }
 
-  // ── Gestion des lignes ───────────────────────────────────────
+  // ── Lignes corps gras ────────────────────────────────────────
 
   addLigne(): void {
     this.lignes.push({ ingredient: null, ingredientId: null, quantite: 100 });
@@ -119,11 +120,8 @@ export class RecipeCalculatorPage implements OnInit {
     this.recetteCalculee = null;
   }
 
-  /** Ingrédients déjà sélectionnés (pour éviter les doublons) */
   isIngredientUsed(ingredientId: number, currentIndex: number): boolean {
-    return this.lignes.some(
-      (l, i) => i !== currentIndex && l.ingredientId === ingredientId
-    );
+    return this.lignes.some((l, i) => i !== currentIndex && l.ingredientId === ingredientId);
   }
 
   // ── Calculs locaux ───────────────────────────────────────────
@@ -144,31 +142,39 @@ export class RecipeCalculatorPage implements OnInit {
       this.lignes.length > 0 &&
       this.lignes.every(l => l.ingredientId !== null && l.quantite > 0) &&
       this.surgraissage >= 0 && this.surgraissage <= 30 &&
-      this.concentrationAlcali >= 20 && this.concentrationAlcali <= 50
+      this.concentrationAlcalin >= 20 && this.concentrationAlcalin <= 50
     );
+  }
+
+  // ── Construction du DTO ──────────────────────────────────────
+
+  buildDTO(): RecetteFormDTO {
+    const total = this.masseTotal;
+    return {
+      titre:               this.titre.trim(),
+      description:         this.description.trim(),   // string vide ok, pas undefined
+      surgraissage:        this.surgraissage,
+      avecSoude:           this.avecSoude,
+      concentrationAlcalin: this.concentrationAlcalin, // ⚠️ champ Kotlin exact
+      ligneIngredients:    this.lignes.map(l => ({
+        ingredientId: l.ingredientId!,
+        recetteId:    this.editId,                     // null en création, id en édition
+        quantite:     l.quantite,
+        pourcentage:  total > 0
+                        ? Math.round((l.quantite / total) * 100 * 100) / 100
+                        : 0,
+      } as LigneIngredientFormDTO)),
+    };
   }
 
   // ── Soumission ───────────────────────────────────────────────
 
-  buildDTO(): RecetteFormDTO {
-    return {
-      titre: this.titre.trim(),
-      description: this.description.trim() || undefined,
-      surgraissage: this.surgraissage,
-      avecSoude: this.avecSoude,
-      concentrationAlcali: this.concentrationAlcali,
-      ligneIngredients: this.lignes.map(l => ({
-        ingredientId: l.ingredientId!,
-        quantite: l.quantite,
-      })),
-    };
-  }
-
   simuler(): void {
     if (!this.isFormValid) return;
-    this.isSaving = true;
-    this.errorMsg = '';
+    this.isSaving   = true;
+    this.errorMsg   = '';
     this.successMsg = '';
+
     const dto = this.buildDTO();
 
     const call$ = this.isEdit
@@ -178,34 +184,28 @@ export class RecipeCalculatorPage implements OnInit {
     call$.subscribe({
       next: (recette) => {
         this.recetteCalculee = recette;
-        this.isSaving = false;
+        this.isSaving        = false;
         if (!this.isEdit) {
-          // Passe en mode édition après la première création
-          this.editId = recette.id;
+          this.editId = recette.id;   // passe en mode édition après la première création
         }
         this.successMsg = this.isEdit
           ? 'Recette mise à jour avec succès !'
           : 'Recette créée et calculée !';
       },
       error: (err) => {
-        this.errorMsg = 'Erreur lors du calcul. Vérifiez que l\'API est disponible.';
+        console.error('Erreur API :', err);
+        this.errorMsg = `Erreur ${err.status ?? ''} : ${err.error?.message ?? 'Vérifiez que l\'API est disponible.'}`;
         this.isSaving = false;
       },
     });
-  }
-
-  sauvegarderEtQuitter(): void {
-    this.simuler();
-    if (!this.errorMsg) {
-      this.router.navigate(['/recipe-manager']);
-    }
   }
 
   // ── Utilitaires résultats ────────────────────────────────────
 
   getInsScore(): number {
     const r = this.recetteCalculee?.resultats?.find(
-      res => res.caracteristique?.nom?.toLowerCase() === 'ins'
+      res => res.caracteristique?.nom?.toLowerCase() === 'ins' ||
+             res.caracteristique?.nom?.toLowerCase() === 'indice ins'
     );
     return r?.score ?? 0;
   }

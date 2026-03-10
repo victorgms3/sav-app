@@ -220,12 +220,12 @@
                 <div class="rc-field">
                   <label class="rc-label">
                     Concentration alcali
-                    <span class="rc-value-badge">{{ concentrationAlcali }} %</span>
+                    <span class="rc-value-badge">{{ concentrationAlcalin }} %</span>
                   </label>
                   <input
                     type="range"
                     class="rc-range"
-                    [(ngModel)]="concentrationAlcali"
+                    [(ngModel)]="concentrationAlcalin"
                     (ngModelChange)="recetteCalculee = null"
                     min="20" max="50" step="1"
                   />

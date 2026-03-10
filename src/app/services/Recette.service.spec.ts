@@ -19,11 +19,13 @@ describe('RecetteService', () => {
   const mockRecetteFormDTO = {
     nom: 'Savon Lavande',
     titre: 'Savon Lavande',
+    description: 'Description du savon',
     surgraissage: 5,
     avecSoude: true,
     concentrationAlcali: 0.25,
+    concentrationAlcalin: 0.25,
     ligneIngredients: [
-      { ingredientId: 1, quantite: 100 }
+      { ingredientId: 1, quantite: 100, recetteId: 1, pourcentage: 10 }
     ]
   };
 

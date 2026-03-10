@@ -3,50 +3,62 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Recette } from '../models/recette.model';
 
+/** DTO envoyé à l'API pour créer ou modifier une recette */
+export interface LigneIngredientFormDTO {
+  ingredientId: number;
+  quantite: number;
+}
+
+export interface RecetteFormDTO {
+  id?: number;
+  titre: string;
+  description?: string;
+  surgraissage: number;
+  avecSoude: boolean;
+  concentrationAlcali: number;
+  ligneIngredients: LigneIngredientFormDTO[];
+}
+
 @Injectable({
-  providedIn: 'root', // Le service est disponible dans toute l'application
+  providedIn: 'root',
 })
 export class RecetteService {
-  // URL de base de notre API :
   private readonly API_URL_RECETTE = 'http://localhost:8080/api-savon/v1/recette';
 
   constructor(private http: HttpClient) {}
 
   /**
-   * Récupère la liste de toutes les recettes depuis le backend.
-   * @returns Un Observable contenant le tableau des recettes.
+   * Récupère la liste de toutes les recettes.
    */
   getRecettes(): Observable<Recette[]> {
     return this.http.get<Recette[]>(this.API_URL_RECETTE);
   }
 
   /**
-   * Récupère une recette spécifique par son identifiant.
-   * @param id L'identifiant de la recette
+   * Récupère une recette par son identifiant.
    */
   getRecetteById(id: number): Observable<Recette> {
     return this.http.get<Recette>(`${this.API_URL_RECETTE}/${id}`);
   }
 
   /**
-   * Ajoute une nouvelle recette.
-   * @param recette La recette à créer
+   * Crée une nouvelle recette via le simulateur.
+   * L'API attend un RecetteFormDTO et retourne la Recette calculée.
    */
-  addRecette(recette: Recette): Observable<Recette> {
-    return this.http.post<Recette>(this.API_URL_RECETTE, recette);
+  addRecette(dto: RecetteFormDTO): Observable<Recette> {
+    return this.http.post<Recette>(this.API_URL_RECETTE, dto);
   }
 
   /**
-   * Met à jour une recette existante.
-   * @param recette La recette à mettre à jour
+   * Met à jour une recette existante via le simulateur.
+   * L'API attend un RecetteFormDTO avec l'id dans l'URL.
    */
-  updateRecette(recette: Recette): Observable<Recette> {
-    return this.http.put<Recette>(`${this.API_URL_RECETTE}/${recette.id}`, recette);
+  updateRecette(id: number, dto: RecetteFormDTO): Observable<Recette> {
+    return this.http.put<Recette>(`${this.API_URL_RECETTE}/${id}`, dto);
   }
 
   /**
    * Supprime une recette par son ID.
-   * @param id L'identifiant de la recette à supprimer
    */
   deleteRecette(id: number): Observable<void> {
     return this.http.delete<void>(`${this.API_URL_RECETTE}/${id}`);

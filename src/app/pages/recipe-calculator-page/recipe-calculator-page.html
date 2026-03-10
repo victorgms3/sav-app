@@ -1,1 +1,390 @@
-<p>recipe-calculator-page works!</p>
+<div class="rc-page container-xl py-4">
+
+  <!-- ══════════════════════════════════════════════
+       EN-TÊTE
+  ══════════════════════════════════════════════ -->
+  <div class="rc-page-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+    <div>
+      <h1 class="rc-title mb-0">
+        <i class="bi bi-calculator me-2"></i>
+        {{ isEdit ? 'Modifier la recette' : 'Nouvelle recette' }}
+      </h1>
+      <p class="rc-subtitle mb-0">
+        {{ isEdit ? 'Recalculez après modification' : 'Composez votre formule de savon' }}
+      </p>
+    </div>
+    <a routerLink="/recipe-manager" class="btn rc-btn-secondary">
+      <i class="bi bi-arrow-left me-1"></i> Retour
+    </a>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       CHARGEMENT INITIAL
+  ══════════════════════════════════════════════ -->
+  @if (isLoadingIngredients || isLoadingRecette) {
+    <div class="text-center py-5">
+      <div class="rc-spinner mx-auto mb-3"></div>
+      <p class="text-muted">Chargement…</p>
+    </div>
+  }
+
+  @if (!isLoadingIngredients && !isLoadingRecette) {
+
+    <!-- ══════════════════════════════════════════════
+         ALERTES
+    ══════════════════════════════════════════════ -->
+    @if (errorMsg) {
+      <div class="rc-alert rc-alert-error d-flex align-items-center gap-2 mb-4">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>{{ errorMsg }}</span>
+        <button class="btn btn-sm btn-outline-danger ms-auto" (click)="errorMsg = ''">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+    }
+    @if (successMsg) {
+      <div class="rc-alert rc-alert-success d-flex align-items-center gap-2 mb-4">
+        <i class="bi bi-check-circle-fill"></i>
+        <span>{{ successMsg }}</span>
+      </div>
+    }
+
+    <div class="row g-4">
+
+      <!-- ══════════════════════════════════════════
+           COLONNE GAUCHE – FORMULAIRE
+      ══════════════════════════════════════════ -->
+      <div class="col-12 col-lg-6">
+
+        <!-- Informations générales -->
+        <div class="rc-card mb-4">
+          <div class="rc-card-header">
+            <i class="bi bi-info-circle me-2"></i>Informations générales
+          </div>
+          <div class="rc-card-body">
+
+            <div class="rc-field mb-3">
+              <label class="rc-label">Titre de la recette *</label>
+              <input
+                type="text"
+                class="rc-input"
+                [(ngModel)]="titre"
+                placeholder="Ex : Savon Lavande & Karité"
+                maxlength="100"
+              />
+            </div>
+
+            <div class="rc-field mb-3">
+              <label class="rc-label">Description <span class="rc-optional">(optionnel)</span></label>
+              <textarea
+                class="rc-input rc-textarea"
+                [(ngModel)]="description"
+                placeholder="Notes, parfums, couleurs…"
+                rows="3"
+                maxlength="500"
+              ></textarea>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Corps gras -->
+        <div class="rc-card mb-4">
+          <div class="rc-card-header">
+            <i class="bi bi-droplet-half me-2"></i>Corps gras
+            <span class="rc-total-badge ms-auto">Total : {{ masseTotal | number:'1.0-0' }} g</span>
+          </div>
+          <div class="rc-card-body">
+
+            @if (allIngredients.length === 0) {
+              <div class="rc-empty-ingredients text-center py-3">
+                <i class="bi bi-exclamation-circle text-warning fs-3 d-block mb-2"></i>
+                <p class="text-muted mb-0">Aucun corps gras disponible dans l'API.</p>
+              </div>
+            }
+
+            @for (ligne of lignes; track $index) {
+              <div class="rc-ligne d-flex align-items-center gap-2 mb-2">
+
+                <!-- Sélecteur ingrédient -->
+                <select
+                  class="rc-select flex-grow-1"
+                  [(ngModel)]="ligne.ingredientId"
+                  (ngModelChange)="onIngredientChange($index)"
+                >
+                  <option [ngValue]="null" disabled>— Choisir un corps gras —</option>
+                  @for (ing of allIngredients; track ing.id) {
+                    <option
+                      [ngValue]="ing.id"
+                      [disabled]="isIngredientUsed(ing.id, $index)"
+                    >
+                      {{ ing.nom }}
+                      @if (isIngredientUsed(ing.id, $index)) { (déjà utilisé) }
+                    </option>
+                  }
+                </select>
+
+                <!-- Quantité -->
+                <div class="rc-quantite-wrap">
+                  <input
+                    type="number"
+                    class="rc-input rc-input-num"
+                    [(ngModel)]="ligne.quantite"
+                    (ngModelChange)="recetteCalculee = null"
+                    min="1"
+                    step="10"
+                    placeholder="g"
+                  />
+                  <span class="rc-input-unit">g</span>
+                </div>
+
+                <!-- % -->
+                <span class="rc-pct-badge">{{ pourcentage(ligne.quantite) }} %</span>
+
+                <!-- Supprimer -->
+                @if (lignes.length > 1) {
+                  <button class="rc-btn-del" (click)="removeLigne($index)" title="Retirer">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                }
+
+              </div>
+
+              <!-- Sapo affiché si ingrédient sélectionné -->
+              @if (ligne.ingredient) {
+                <div class="rc-sapo-hint mb-3">
+                  <i class="bi bi-info-circle me-1"></i>
+                  SAP : {{ ligne.ingredient.sapo }} &nbsp;·&nbsp;
+                  INS : {{ ligne.ingredient.ins }}
+                </div>
+              }
+            }
+
+            <button class="rc-btn-add-ligne mt-2" (click)="addLigne()">
+              <i class="bi bi-plus-circle me-1"></i>Ajouter un corps gras
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Paramètres alcali -->
+        <div class="rc-card mb-4">
+          <div class="rc-card-header">
+            <i class="bi bi-flask me-2"></i>Paramètres alcali
+          </div>
+          <div class="rc-card-body">
+
+            <div class="rc-field mb-4">
+              <label class="rc-label">Type d'alcali</label>
+              <div class="rc-alcali-toggle d-flex gap-2">
+                <button
+                  class="rc-alcali-btn flex-grow-1"
+                  [class.active]="avecSoude"
+                  (click)="avecSoude = true; recetteCalculee = null"
+                >
+                  <i class="bi bi-flask-fill me-1"></i>NaOH
+                  <small class="d-block">Soude caustique (savon solide)</small>
+                </button>
+                <button
+                  class="rc-alcali-btn flex-grow-1"
+                  [class.active]="!avecSoude"
+                  (click)="avecSoude = false; recetteCalculee = null"
+                >
+                  <i class="bi bi-flask me-1"></i>KOH
+                  <small class="d-block">Potasse (savon liquide)</small>
+                </button>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-6">
+                <div class="rc-field">
+                  <label class="rc-label">
+                    Surgraissage
+                    <span class="rc-value-badge">{{ surgraissage }} %</span>
+                  </label>
+                  <input
+                    type="range"
+                    class="rc-range"
+                    [(ngModel)]="surgraissage"
+                    (ngModelChange)="recetteCalculee = null"
+                    min="0" max="30" step="1"
+                  />
+                  <div class="rc-range-labels">
+                    <span>0 %</span><span>30 %</span>
+                  </div>
+                  <p class="rc-hint">Part de corps gras non saponifiée (recommandé : 5–8 %)</p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="rc-field">
+                  <label class="rc-label">
+                    Concentration alcali
+                    <span class="rc-value-badge">{{ concentrationAlcali }} %</span>
+                  </label>
+                  <input
+                    type="range"
+                    class="rc-range"
+                    [(ngModel)]="concentrationAlcali"
+                    (ngModelChange)="recetteCalculee = null"
+                    min="20" max="50" step="1"
+                  />
+                  <div class="rc-range-labels">
+                    <span>20 %</span><span>50 %</span>
+                  </div>
+                  <p class="rc-hint">Concentration de la solution alcaline (recommandé : 28–33 %)</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Boutons -->
+        <div class="d-flex gap-3 flex-wrap">
+          <button
+            class="btn rc-btn-primary flex-grow-1"
+            [disabled]="!isFormValid || isSaving"
+            (click)="simuler()"
+          >
+            @if (isSaving) {
+              <span class="rc-spinner-sm me-2"></span>Calcul en cours…
+            } @else {
+              <i class="bi bi-play-fill me-1"></i>
+              {{ recetteCalculee ? 'Recalculer' : 'Calculer la recette' }}
+            }
+          </button>
+          @if (recetteCalculee) {
+            <a routerLink="/recipe-manager" class="btn rc-btn-secondary">
+              <i class="bi bi-check2 me-1"></i>Terminer
+            </a>
+          }
+        </div>
+
+      </div><!-- /col gauche -->
+
+      <!-- ══════════════════════════════════════════
+           COLONNE DROITE – RÉSULTATS
+      ══════════════════════════════════════════ -->
+      <div class="col-12 col-lg-6">
+
+        @if (!recetteCalculee) {
+          <div class="rc-results-placeholder text-center py-5">
+            <i class="bi bi-calculator rc-placeholder-icon d-block mb-3"></i>
+            <p class="rc-placeholder-title">Les résultats s'afficheront ici</p>
+            <p class="text-muted">Remplissez le formulaire et cliquez sur <strong>Calculer</strong>.</p>
+          </div>
+        }
+
+        @if (recetteCalculee) {
+          <div class="rc-results-wrap">
+
+            <!-- Score INS principal -->
+            <div class="rc-ins-banner mb-4">
+              <div class="rc-ins-label">Score INS</div>
+              <div class="rc-ins-value">{{ getInsScore() }}</div>
+              <span [class]="qualiteClass(getInsScore())">
+                {{ qualiteLabel(getInsScore()) }}
+              </span>
+            </div>
+
+            <!-- Récapitulatif alcali -->
+            <div class="rc-card mb-4">
+              <div class="rc-card-header">
+                <i class="bi bi-flask me-2"></i>Quantités calculées
+              </div>
+              <div class="rc-card-body">
+                <div class="row g-3 text-center">
+                  <div class="col-4">
+                    <div class="rc-stat">
+                      <span class="rc-stat-val">{{ recetteCalculee.qteAlcali | number:'1.1-1' }} g</span>
+                      <span class="rc-stat-lbl">{{ recetteCalculee.avecSoude ? 'NaOH' : 'KOH' }}</span>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="rc-stat">
+                      <span class="rc-stat-val">{{ recetteCalculee.concentrationAlcali }} %</span>
+                      <span class="rc-stat-lbl">Concentration</span>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="rc-stat">
+                      <span class="rc-stat-val">{{ recetteCalculee.surgraissage }} %</span>
+                      <span class="rc-stat-lbl">Surgraissage</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Composition corps gras -->
+            <div class="rc-card mb-4">
+              <div class="rc-card-header">
+                <i class="bi bi-droplet-half me-2"></i>Composition
+              </div>
+              <div class="rc-card-body p-0">
+                <table class="table rc-table mb-0">
+                  <thead>
+                    <tr>
+                      <th>Corps gras</th>
+                      <th class="text-end">%</th>
+                      <th class="text-end">Quantité</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (ligne of recetteCalculee.ligneIngredients; track ligne.ingredient.id) {
+                      <tr>
+                        <td>{{ ligne.ingredient.nom }}</td>
+                        <td class="text-end text-muted">{{ ligne.pourcentage }} %</td>
+                        <td class="text-end fw-semibold">{{ ligne.quantite | number:'1.1-1' }} g</td>
+                      </tr>
+                    }
+                  </tbody>
+                  <tfoot>
+                    <tr class="rc-table-total">
+                      <td><strong>Total</strong></td>
+                      <td class="text-end">100 %</td>
+                      <td class="text-end fw-bold">{{ masseTotal | number:'1.0-0' }} g</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+
+            <!-- Caractéristiques -->
+            @if (recetteCalculee.resultats.length > 0) {
+              <div class="rc-card">
+                <div class="rc-card-header">
+                  <i class="bi bi-bar-chart-fill me-2"></i>Caractéristiques du savon
+                </div>
+                <div class="rc-card-body">
+                  <div class="rc-resultats-grid">
+                    @for (res of recetteCalculee.resultats; track res.caracteristique.id) {
+                      <div class="rc-resultat-item">
+                        <div class="rc-resultat-header">
+                          <span class="rc-resultat-nom">{{ res.caracteristique.nom }}</span>
+                          <span class="rc-resultat-score">{{ res.score }}</span>
+                        </div>
+                        <div class="rc-resultat-bar-track">
+                          <div class="rc-resultat-bar" [style.width.%]="barWidth(res.score)"></div>
+                        </div>
+                        @if (res.mention) {
+                          <span class="rc-resultat-mention">{{ res.mention.label }}</span>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+
+          </div>
+        }
+
+      </div><!-- /col droite -->
+
+    </div><!-- /row -->
+
+  }
+
+</div>

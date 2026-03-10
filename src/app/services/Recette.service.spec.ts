@@ -16,6 +16,17 @@ describe('RecetteService', () => {
     { id: 2, nom: 'Savon Rose' } as unknown as Recette,
   ];
 
+  const mockRecetteFormDTO = {
+    nom: 'Savon Lavande',
+    titre: 'Savon Lavande',
+    surgraissage: 5,
+    avecSoude: true,
+    concentrationAlcali: 0.25,
+    ligneIngredients: [
+      { ingredientId: 1, quantite: 100 }
+    ]
+  };
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
@@ -54,24 +65,24 @@ describe('RecetteService', () => {
   });
 
   it('should add a new recette (POST)', () => {
-    service.addRecette(mockRecette).subscribe((recette : any) => {
+    service.addRecette(mockRecetteFormDTO).subscribe((recette : any) => {
       expect(recette).toEqual(mockRecette);
     });
 
     const req = httpMock.expectOne(API_URL);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual(mockRecette);
+    expect(req.request.body).toEqual(mockRecetteFormDTO);
     req.flush(mockRecette);
   });
 
   it('should update an existing recette (PUT)', () => {
-    service.updateRecette(mockRecette).subscribe((recette : any) => {
+    service.updateRecette(mockRecette.id, mockRecetteFormDTO).subscribe((recette : any) => {
       expect(recette).toEqual(mockRecette);
     });
 
     const req = httpMock.expectOne(`${API_URL}/1`);
     expect(req.request.method).toBe('PUT');
-    expect(req.request.body).toEqual(mockRecette);
+    expect(req.request.body).toEqual(mockRecetteFormDTO);
     req.flush(mockRecette);
   });
 

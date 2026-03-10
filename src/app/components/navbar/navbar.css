@@ -10,7 +10,7 @@
       color: rgb(255, 255, 255);
     }
     .active {
-      color: green;
+      color: rgb(0, 0, 0);
     }
     .admin-only {
       background: rgb(3, 145, 171);
@@ -36,3 +36,5 @@
   border-left: 1px solid;
   border-color: rgb(110, 110, 110);
 }
+/* Classe pour la barre de navigation (calculateur et mes recettes) avec le fond d'une couleur  */
+

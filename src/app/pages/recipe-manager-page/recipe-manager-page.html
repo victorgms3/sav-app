@@ -1,1 +1,366 @@
-<p>recipe-manager-page works!</p>
+<div class="rm-page container-xl py-4">
+
+  <!-- ══════════════════════════════════════════════
+       EN-TÊTE DE PAGE
+  ══════════════════════════════════════════════ -->
+  <div class="rm-page-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+    <div>
+      <h1 class="rm-title mb-0">
+        <i class="bi bi-journal-text me-2"></i>Mes Recettes
+      </h1>
+      <p class="rm-subtitle mb-0">
+        {{ filteredRecettes.length }} recette{{ filteredRecettes.length !== 1 ? 's' : '' }} enregistrée{{ filteredRecettes.length !== 1 ? 's' : '' }}
+      </p>
+    </div>
+    <a routerLink="/recipe-calculator" class="btn rm-btn-primary">
+      <i class="bi bi-plus-lg me-1"></i> Nouvelle recette
+    </a>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       BARRE D'OUTILS
+  ══════════════════════════════════════════════ -->
+  <div class="rm-toolbar d-flex align-items-center gap-3 mb-4 flex-wrap">
+
+    <!-- Recherche -->
+    <div class="rm-search-wrap flex-grow-1">
+      <i class="bi bi-search rm-search-icon"></i>
+      <input
+        type="text"
+        class="rm-search-input"
+        placeholder="Rechercher par titre ou description…"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="applyFilter()"
+      />
+      @if (searchTerm) {
+        <button class="rm-search-clear" (click)="clearSearch()" title="Effacer">
+          <i class="bi bi-x-circle-fill"></i>
+        </button>
+      }
+    </div>
+
+    <!-- Tri -->
+    <div class="rm-sort-group d-flex gap-2">
+      <button class="rm-sort-btn" [class.active]="sortField === 'titre'" (click)="setSort('titre')" title="Trier par titre">
+        <i class="bi bi-sort-alpha-down"></i>
+        @if (sortField === 'titre') {
+          <i class="bi" [class.bi-arrow-up]="sortAsc" [class.bi-arrow-down]="!sortAsc"></i>
+        }
+      </button>
+      <button class="rm-sort-btn" [class.active]="sortField === 'ins'" (click)="setSort('ins')" title="Trier par INS">
+        <i class="bi bi-award"></i>
+        @if (sortField === 'ins') {
+          <i class="bi" [class.bi-arrow-up]="sortAsc" [class.bi-arrow-down]="!sortAsc"></i>
+        }
+      </button>
+      <button class="rm-sort-btn" [class.active]="sortField === 'surgraissage'" (click)="setSort('surgraissage')" title="Trier par surgraissage">
+        <i class="bi bi-droplet-half"></i>
+        @if (sortField === 'surgraissage') {
+          <i class="bi" [class.bi-arrow-up]="sortAsc" [class.bi-arrow-down]="!sortAsc"></i>
+        }
+      </button>
+    </div>
+
+    <!-- Bascule vue -->
+    <div class="rm-view-toggle d-flex">
+      <button class="rm-view-btn" [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'" title="Vue grille">
+        <i class="bi bi-grid-3x3-gap-fill"></i>
+      </button>
+      <button class="rm-view-btn" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'" title="Vue liste">
+        <i class="bi bi-list-ul"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       CHARGEMENT
+  ══════════════════════════════════════════════ -->
+  @if (isLoading) {
+    <div class="rm-state-block text-center py-5">
+      <div class="rm-spinner mx-auto mb-3"></div>
+      <p class="text-muted">Chargement de vos recettes…</p>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════
+       ERREUR API
+  ══════════════════════════════════════════════ -->
+  @if (!isLoading && errorMsg) {
+    <div class="rm-alert-error d-flex align-items-center gap-3 p-3 mb-4">
+      <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+      <span>{{ errorMsg }}</span>
+      <button class="btn btn-sm btn-outline-danger ms-auto" (click)="getRecettes()">
+        <i class="bi bi-arrow-clockwise me-1"></i>Réessayer
+      </button>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════
+       LISTE VIDE
+  ══════════════════════════════════════════════ -->
+  @if (!isLoading && !errorMsg && filteredRecettes.length === 0) {
+    <div class="rm-state-empty text-center py-5">
+      @if (searchTerm) {
+        <i class="bi bi-search rm-empty-icon"></i>
+        <p class="rm-empty-title">Aucune recette pour « {{ searchTerm }} »</p>
+        <button class="btn rm-btn-secondary" (click)="clearSearch()">Effacer la recherche</button>
+      } @else {
+        <i class="bi bi-journal-plus rm-empty-icon"></i>
+        <p class="rm-empty-title">Vous n'avez pas encore de recette</p>
+        <p class="text-muted mb-3">Créez votre première recette de savon avec le calculateur.</p>
+        <a routerLink="/recipe-calculator" class="btn rm-btn-primary">
+          <i class="bi bi-plus-lg me-1"></i>Créer ma première recette
+        </a>
+      }
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════
+       VUE GRILLE
+  ══════════════════════════════════════════════ -->
+  @if (!isLoading && !errorMsg && filteredRecettes.length > 0 && viewMode === 'grid') {
+    <div class="rm-grid">
+      @for (recette of filteredRecettes; track recette.id) {
+        <div class="rm-card" (click)="voirDetail(recette)">
+
+          <!-- Badge qualité INS -->
+          <span [class]="qualiteClass(getInsScore(recette))">
+            {{ qualiteLabel(getInsScore(recette)) }}
+          </span>
+
+          <div class="rm-card-body">
+            <h3 class="rm-card-title">{{ recette.titre }}</h3>
+            <p class="rm-card-desc">{{ recette.description || 'Aucune description.' }}</p>
+
+            <div class="rm-card-stats">
+              <div class="rm-stat">
+                <span class="rm-stat-val">{{ getMasseTotal(recette) | number:'1.0-0' }} g</span>
+                <span class="rm-stat-lbl">Corps gras</span>
+              </div>
+              <div class="rm-stat">
+                <span class="rm-stat-val">{{ recette.surgraissage }} %</span>
+                <span class="rm-stat-lbl">Surgraissage</span>
+              </div>
+              <div class="rm-stat">
+                <span class="rm-stat-val">{{ getInsScore(recette) }}</span>
+                <span class="rm-stat-lbl">INS</span>
+              </div>
+            </div>
+
+            <!-- Tag alcali -->
+            <div class="rm-alcali-tag mt-2">
+              <i class="bi bi-flask me-1"></i>
+              {{ nomAlcali(recette) }} · {{ recette.concentrationAlcali }} % ·
+              {{ recette.qteAlcali | number:'1.1-1' }} g
+            </div>
+          </div>
+
+          <div class="rm-card-footer d-flex align-items-center justify-content-between">
+            <span class="rm-card-lignes">
+              <i class="bi bi-droplet me-1"></i>
+              {{ recette.ligneIngredients?.length ?? 0 }} corps gras
+            </span>
+            <div class="rm-card-actions" (click)="$event.stopPropagation()">
+              <a [routerLink]="['/recipe-calculator', recette.id]"
+                 class="rm-action-btn rm-action-edit"
+                 title="Modifier">
+                <i class="bi bi-pencil-fill"></i>
+              </a>
+              <button class="rm-action-btn rm-action-del"
+                      title="Supprimer"
+                      (click)="deleteRecette(recette.id)">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════
+       VUE LISTE
+  ══════════════════════════════════════════════ -->
+  @if (!isLoading && !errorMsg && filteredRecettes.length > 0 && viewMode === 'list') {
+    <div class="rm-list-wrap">
+      <table class="table rm-table">
+        <thead>
+          <tr>
+            <th class="sortable" (click)="setSort('titre')">
+              Titre
+              <i class="bi" [class.bi-arrow-up]="sortField==='titre' && sortAsc"
+                            [class.bi-arrow-down]="sortField==='titre' && !sortAsc"></i>
+            </th>
+            <th>Description</th>
+            <th class="text-end">Corps gras (g)</th>
+            <th class="sortable text-center" (click)="setSort('surgraissage')">
+              Surgr. %
+              <i class="bi" [class.bi-arrow-up]="sortField==='surgraissage' && sortAsc"
+                            [class.bi-arrow-down]="sortField==='surgraissage' && !sortAsc"></i>
+            </th>
+            <th class="text-center">Alcali</th>
+            <th class="sortable text-center" (click)="setSort('ins')">
+              INS
+              <i class="bi" [class.bi-arrow-up]="sortField==='ins' && sortAsc"
+                            [class.bi-arrow-down]="sortField==='ins' && !sortAsc"></i>
+            </th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (recette of filteredRecettes; track recette.id) {
+            <tr class="rm-table-row" (click)="voirDetail(recette)">
+              <td class="fw-semibold">{{ recette.titre }}</td>
+              <td class="text-muted rm-desc-cell">{{ recette.description || '—' }}</td>
+              <td class="text-end">{{ getMasseTotal(recette) | number:'1.0-0' }} g</td>
+              <td class="text-center">{{ recette.surgraissage }} %</td>
+              <td class="text-center">
+                <span class="rm-alcali-pill">{{ nomAlcali(recette) }}</span>
+              </td>
+              <td class="text-center">
+                <span [class]="qualiteClass(getInsScore(recette))">
+                  {{ getInsScore(recette) }}
+                </span>
+              </td>
+              <td class="text-center" (click)="$event.stopPropagation()">
+                <div class="d-flex justify-content-center gap-1">
+                  <a [routerLink]="['/recipe-calculator', recette.id]"
+                     class="rm-action-btn rm-action-edit"
+                     title="Modifier">
+                    <i class="bi bi-pencil-fill"></i>
+                  </a>
+                  <button class="rm-action-btn rm-action-del"
+                          title="Supprimer"
+                          (click)="deleteRecette(recette.id)">
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     MODALE DE DÉTAIL
+══════════════════════════════════════════════ -->
+@if (recetteDetail) {
+  <div class="rm-modal-backdrop" (click)="fermerDetail()">
+    <div class="rm-modal" (click)="$event.stopPropagation()">
+
+      <div class="rm-modal-header">
+        <div>
+          <h2 class="rm-modal-title">{{ recetteDetail.titre }}</h2>
+          <span [class]="qualiteClass(getInsScore(recetteDetail))">
+            INS {{ getInsScore(recetteDetail) }} — {{ qualiteLabel(getInsScore(recetteDetail)) }}
+          </span>
+        </div>
+        <button class="rm-modal-close" (click)="fermerDetail()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="rm-modal-body">
+
+        @if (recetteDetail.description) {
+          <p class="rm-modal-desc">{{ recetteDetail.description }}</p>
+        }
+
+        <!-- Stats principales -->
+        <div class="rm-modal-stats row g-3 mb-4">
+          <div class="col-6 col-md-3">
+            <div class="rm-modal-stat">
+              <span class="rm-modal-stat-val">{{ getMasseTotal(recetteDetail) | number:'1.0-0' }} g</span>
+              <span class="rm-modal-stat-lbl">Total corps gras</span>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="rm-modal-stat">
+              <span class="rm-modal-stat-val">{{ recetteDetail.surgraissage }} %</span>
+              <span class="rm-modal-stat-lbl">Surgraissage</span>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="rm-modal-stat">
+              <span class="rm-modal-stat-val">
+                {{ recetteDetail.qteAlcali | number:'1.1-1' }} g
+              </span>
+              <span class="rm-modal-stat-lbl">{{ nomAlcali(recetteDetail) }}</span>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="rm-modal-stat">
+              <span class="rm-modal-stat-val">{{ recetteDetail.concentrationAlcali }} %</span>
+              <span class="rm-modal-stat-lbl">Concentration alcali</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Corps gras -->
+        @if (recetteDetail && recetteDetail.ligneIngredients.length > 0) {
+          <h5 class="rm-modal-section-title">
+            <i class="bi bi-droplet-half me-2"></i>Corps gras
+          </h5>
+          <table class="table rm-table rm-table-sm mb-4">
+            <thead>
+              <tr>
+                <th>Ingrédient</th>
+                <th class="text-end">%</th>
+                <th class="text-end">Quantité (g)</th>
+                <th class="text-end">SAP</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (ligne of recetteDetail.ligneIngredients; track ligne.ingredient.id) {
+                <tr>
+                  <td>{{ ligne.ingredient.nom }}</td>
+                  <td class="text-end">{{ ligne.pourcentage }} %</td>
+                  <td class="text-end">{{ ligne.quantite | number:'1.1-1' }} g</td>
+                  <td class="text-end text-muted">{{ ligne.ingredient.sapo }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+
+        <!-- Résultats / caractéristiques -->
+        @if (recetteDetail.resultats.length > 0) {
+          <h5 class="rm-modal-section-title">
+            <i class="bi bi-bar-chart-fill me-2"></i>Caractéristiques du savon
+          </h5>
+          <div class="rm-resultats-grid">
+            @for (resultat of recetteDetail.resultats; track resultat.caracteristique.id) {
+              <div class="rm-resultat-item">
+                <div class="rm-resultat-header">
+                  <span class="rm-resultat-nom">{{ resultat.caracteristique.nom }}</span>
+                  <span class="rm-resultat-score">{{ resultat.score }}</span>
+                </div>
+                <div class="rm-resultat-bar-track">
+                  <div class="rm-resultat-bar"
+                       [style.width.%]="(resultat.score / 100) * 100">
+                  </div>
+                </div>
+                @if (resultat.mention) {
+                  <span class="rm-resultat-mention">{{ resultat.mention.label }}</span>
+                }
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+
+      <div class="rm-modal-footer">
+        <button class="btn rm-btn-secondary" (click)="fermerDetail()">Fermer</button>
+        <a [routerLink]="['/recipe-calculator', recetteDetail.id]" class="btn rm-btn-primary">
+          <i class="bi bi-pencil-fill me-1"></i>Modifier
+        </a>
+      </div>
+
+    </div>
+  </div>
+}

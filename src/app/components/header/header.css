@@ -1,60 +1,152 @@
+/* ============================================================
+   SAVAPP – Header Component
+   ============================================================ */
+
 .app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  font-family: var(--font-body);
+
+  /* ── Top Bar ─────────────────────────────────────────────── */
   .top-bar-fluid {
     height: var(--top-bar-height);
     background: var(--dark-side-charter);
   }
+
   .top-bar-content {
     height: var(--top-bar-height);
     background: var(--brown-charter);
-    border-left: solid 1px var(--green-charter);
-    border-right: solid 1px var(--green-charter);
+    border-left: 1px solid var(--green-charter);
+    border-right: 1px solid var(--green-charter);
     display: flex;
-    /* Ajout pour aligner les éléments */
     align-items: center;
-    /* Centre verticalement les éléments */
+    justify-content: space-between;
+    padding: 0 12px;
+    position: relative;
+
+    /* Trait vert subtil en bas */
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--green-charter), transparent);
+      opacity: .5;
+    }
   }
+
+  /* ── Logo ────────────────────────────────────────────────── */
   .logo {
-    height: var(--top-bar-height);
+    height: calc(var(--top-bar-height) - 10px);
+    width: auto;
+    object-fit: contain;
+    filter: brightness(1.05);
+    transition: opacity var(--transition);
+
+    &:hover { opacity: .85; }
   }
+
+  /* ── User Menu ───────────────────────────────────────────── */
   .user-menu {
     display: flex;
-    height: 30px;
-    border-radius: 15px;
-    /* align-items: center; */
+    align-items: center;
+    height: 32px;
+    border-radius: 16px;
     background: var(--green-charter);
-    padding: 0px;
-    .user-name {
-      min-width: 120px;
-      color: white;
-      margin-left: 10px;
-      margin-right: 0px;
-      padding-right: 0px;
-      transform: translateX(8px);
+    overflow: visible;
+    box-shadow: 0 2px 10px rgba(0,0,0,.3);
+    transition: box-shadow var(--transition);
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(74,124,89,.4);
     }
+
+    /* Nom de l'utilisateur */
+    .user-name {
+      min-width: 110px;
+      color: var(--brown-charter);
+      font-size: .83rem;
+      font-weight: 600;
+      letter-spacing: .01em;
+      background: var(--cream) !important;
+      border-radius: 3px;
+      padding: 2px 10px 2px 10px;
+      margin-left: 6px;
+      white-space: nowrap;
+      border: none;
+    }
+
+    /* Bouton chevron */
     .dropdown-btn {
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
       background: var(--purple-charter);
       border: none;
-      margin-right: 0px;
       color: white;
-      font-size: 20px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
       z-index: 2;
+      flex-shrink: 0;
+
+      &::after {
+        /* override Bootstrap caret */
+        border-top-color: white;
+      }
+
+      &:hover {
+        background: var(--purple-light);
+        transform: scale(1.08);
+      }
+
+      &[aria-expanded="true"] {
+        background: var(--purple-light);
+        transform: rotate(180deg);
+      }
     }
-    /* Style du menu dropdown */
+
+    /* Dropdown panel */
     .dropdown-menu {
-      z-index: 1021;
-      min-width: 150px;
-      box-shadow: 0 8px 8px rgba(0, 0, 0, 0.3);
+      z-index: 1040;
+      min-width: 170px;
+      border: 1px solid var(--green-muted);
+      border-radius: 10px;
+      box-shadow: var(--shadow-md);
+      background: var(--warm-white);
+      padding: 6px 0;
+      margin-top: 6px !important;
+      overflow: hidden;
     }
-    /* Espacement des éléments */
+
     .dropdown-item {
-      padding: 5px 10px;
+      font-family: var(--font-body);
+      font-size: .875rem;
+      font-weight: 400;
+      color: var(--brown-charter);
+      padding: 8px 16px;
+      transition: background var(--transition), color var(--transition), padding-left var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      &:hover {
+        background: var(--green-muted);
+        color: var(--green-charter);
+        padding-left: 22px;
+      }
     }
-    /* Style au survol */
-    .dropdown-item:hover {
-      background: var(--green-charter);
-      color: white;
+
+    /* Petite ligne de séparation entre items */
+    .dropdown-item + .dropdown-item {
+      border-top: 1px solid rgba(0,0,0,.05);
     }
   }
 }

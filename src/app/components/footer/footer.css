@@ -1,52 +1,150 @@
+/* ============================================================
+   SAVAPP – Footer Component
+   ============================================================ */
+
 .footer {
   background: var(--dark-charter);
-  color: rgb(0, 0, 0);
-  /* padding: 20px 10px; */
+  color: rgba(255,255,255,.8);
+  font-family: var(--font-body);
+  border-top: 3px solid var(--green-charter);
+
+  /* ── Ligne principale ─────────────────────────────────────── */
   .footer-row {
-    min-height: 100px;
+    min-height: 110px;
+    padding: 24px 0;
   }
+
+  /* ── Colonne 1 : Logo ─────────────────────────────────────── */
+  .footer-col1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    @media (min-width: 1200px) {
+      justify-content: flex-start;
+    }
+  }
+
   .footer-logo {
-    height: 30px;
+    height: 34px;
+    width: auto;
+    object-fit: contain;
+    filter: brightness(1.1) drop-shadow(0 2px 6px rgba(0,0,0,.4));
+    transition: filter var(--transition);
+
+    &:hover { filter: brightness(1.25) drop-shadow(0 2px 10px rgba(74,124,89,.5)); }
   }
+
+  /* ── Séparateurs des colonnes ─────────────────────────────── */
+  .footer-col2,
+  .footer-col3,
+  .footer-col4 {
+    border-left: 1px solid rgba(176,168,152,.25);
+    padding-left: 20px;
+
+    @media (max-width: 1199px) {
+      border-left: none;
+      border-top: 1px solid rgba(176,168,152,.2);
+      padding-top: 16px;
+      margin-top: 8px;
+    }
+  }
+
+  /* ── Icônes ───────────────────────────────────────────────── */
   .footer-icon {
-    color: var(--green-charter);
+    color: var(--green-light);
+    font-size: 17px;
+    flex-shrink: 0;
+    transition: color var(--transition), transform var(--transition);
   }
-  /* .footer-col1 {
- width: 200px;
- } */
-  .footer-col2 {
-    border-left: solid 3px silver;
+
+  /* ── Liens ────────────────────────────────────────────────── */
+  .footer-link {
+    font-size: .875rem;
+    font-weight: 400;
+    color: rgba(255,255,255,.7);
+    text-decoration: none;
+    transition: color var(--transition);
+
+    &:hover {
+      color: var(--green-light);
+      text-decoration: none;
+    }
   }
+
+  /* Groupes icône + lien */
+  .d-flex.align-items-center {
+    gap: 8px;
+    margin-bottom: 8px;
+
+    &:last-child { margin-bottom: 0; }
+
+    &:hover .footer-icon {
+      color: var(--green-light);
+      transform: scale(1.15);
+    }
+  }
+
+  /* ── Colonne 3 : Adresse ──────────────────────────────────── */
   .footer-col3 {
-    border-left: solid 3px silver;
+    .footer-icon {
+      font-size: 2.4rem;
+      color: var(--purple-light);
+      transition: color var(--transition), transform var(--transition);
+      cursor: pointer;
+
+      &:hover {
+        color: var(--green-light);
+        transform: scale(1.1);
+      }
+    }
 
     .adresse-postale {
-      font-size: 0.8em;
-    }
-    .footer-icon {
-      font-size: 3em;
+      font-size: .825rem;
+      line-height: 1.65;
+      color: rgba(255,255,255,.65);
     }
   }
+
+  /* ── Colonne 4 : Liens légaux ─────────────────────────────── */
   .footer-col4 {
-    border-left: solid 3px silver;
-  }
-  .footer-link {
-    font-size: 0.9em;
-    color:black;
-    text-decoration: none;
-    font-weight: normal;
-    &:hover {
-      text-decoration: underline;
+    ul li {
+      margin-bottom: 6px;
+
+      &:last-child { margin-bottom: 0; }
+    }
+
+    .footer-link {
+      font-size: .825rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+
+      &::before {
+        content: '›';
+        color: var(--green-charter);
+        font-size: 1rem;
+        line-height: 1;
+        transition: transform var(--transition);
+      }
+
+      &:hover::before { transform: translateX(3px); }
     }
   }
-  .footer-icon {
-    color: var(--purple-charter);
-    font-size: 20px;
-  }
+
+  /* ── Bande copyright ──────────────────────────────────────── */
   .footer-bottom {
-    height: 25px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--green-charter);
-    font-size: 0.8em;
-    color: rgb(83, 83, 83);
+
+    .text-center {
+      font-size: .75rem;
+      font-weight: 500;
+      letter-spacing: .04em;
+      color: rgba(255,255,255,.85);
+    }
   }
 }

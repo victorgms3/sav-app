@@ -1,40 +1,161 @@
+/* ============================================================
+   SAVAPP – Navbar Component
+   ============================================================ */
+
 .nav-bar-fluid {
   background: var(--dark-side-charter);
-  box-shadow: 0px 20px 10px white;
+  box-shadow: 0 6px 24px rgba(0,0,0,.35);
+
   .nav-bar-content {
     background: var(--dark-charter);
-    border-top: 4px solid var(--green-charter);
-    border-left: solid 1px var(--green-charter);
-    border-right: solid 1px var(--green-charter);
-    .nav-link {
-      color: rgb(255, 255, 255);
+    border-top: 3px solid var(--green-charter);
+    border-left: 1px solid rgba(74,124,89,.4);
+    border-right: 1px solid rgba(74,124,89,.4);
+    padding: 0 4px;
+  }
+}
+
+/* ── Nav Items ───────────────────────────────────────────────── */
+.navbar-nav {
+  gap: 0;
+  margin: 0 4px;
+  align-items: stretch;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  border-left: 1px solid rgba(255,255,255,.08);
+  position: relative;
+
+  /* Trait vert au survol et état actif */
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%; right: 50%;
+    height: 2px;
+    background: var(--green-charter);
+    transition: left var(--transition), right var(--transition);
+  }
+
+  &:hover::after,
+  &:has(.active)::after {
+    left: 8px;
+    right: 8px;
+  }
+
+  &.border-0 {
+    border-left: none;
+  }
+}
+
+/* ── Nav Links ───────────────────────────────────────────────── */
+.nav-bar-content .nav-link {
+  font-family: var(--font-body);
+  font-size: .85rem;
+  font-weight: 500;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.75);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color var(--transition), background var(--transition);
+  white-space: nowrap;
+
+  i {
+    font-size: 14px;
+    transition: transform var(--transition);
+  }
+
+  &:hover {
+    color: #fff;
+    background: rgba(255,255,255,.06);
+
+    i { transform: translateY(-1px); }
+  }
+
+  /* État actif (routerLinkActive) */
+  &.active {
+    color: var(--green-light);
+    background: rgba(74,124,89,.12);
+    font-weight: 600;
+  }
+}
+
+/* ── Admin-only items ────────────────────────────────────────── */
+.nav-item.admin-only {
+  background: rgba(3,145,171,.12);
+  border-radius: 0;
+  margin: 6px 4px;
+  border-left: 1px solid rgba(3,145,171,.3);
+  border-radius: 8px;
+
+  .nav-link {
+    color: #5de0f5;
+    padding: 4px 12px;
+
+    &:hover {
+      color: white;
+      background: rgba(3,145,171,.25);
     }
-    .active {
-      color: rgb(0, 0, 0);
-    }
-    .admin-only {
-      background: rgb(3, 145, 171);
-        color: white;
-        border-radius: 15px;
-        padding: 5px 10px;
-        border: none;
+
+    &.active {
+      color: white;
+      background: rgba(3,145,171,.35);
     }
   }
 }
-.navbar-nav {
-  gap: 0px; /* Supprime l'espace entre les éléments */
-  margin: 2px;
-}
-.navbar-toggler {
-  width: 55px;
-  background-color: var(--purple-charter);
-  color: white;
-}
-.nav-item {
-  margin: 0px; /* Contrôle l'espace entre chaque élément */
-  padding: 0px 5px 0px 5px;
-  border-left: 1px solid;
-  border-color: rgb(110, 110, 110);
-}
-/* Classe pour la barre de navigation (calculateur et mes recettes) avec le fond d'une couleur  */
 
+/* ── Hamburger button (mobile) ───────────────────────────────── */
+.navbar-toggler {
+  width: 40px;
+  height: 34px;
+  padding: 4px;
+  background-color: var(--purple-charter);
+  border: none;
+  border-radius: 6px;
+  margin: 5px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition);
+
+  &:hover { background: var(--purple-light); }
+
+  .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255,255,255,0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* ── Responsive collapse ─────────────────────────────────────── */
+@media (max-width: 575px) {
+  .nav-bar-content .navbar-collapse {
+    background: var(--dark-charter);
+    border-top: 1px solid rgba(74,124,89,.3);
+    padding: 6px 0;
+  }
+
+  .navbar-nav { flex-direction: column; }
+
+  .nav-item {
+    border-left: none;
+    border-top: 1px solid rgba(255,255,255,.06);
+
+    &::after { display: none; }
+  }
+
+  .nav-bar-content .nav-link {
+    padding: 10px 20px;
+  }
+
+  .nav-item.admin-only {
+    margin: 4px 12px;
+    border-radius: 8px;
+  }
+}

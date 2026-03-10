@@ -1,1 +1,68 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================================
+   SAVAPP – Global Styles & Design Tokens
+   Thème : Artisanal · Raffiné · Chaud
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* ── Variables ─────────────────────────────────────────────── */
+:root {
+  /* Palette */
+  --green-charter:       #4a7c59;
+  --green-light:         #6aab7c;
+  --green-muted:         #d4e6d9;
+  --purple-charter:      #5c4a7c;
+  --purple-light:        #8470a8;
+  --brown-charter:       #3b2a1a;
+  --brown-light:         #6b4f3a;
+  --dark-charter:        #1e1a16;
+  --dark-side-charter:   #111009;
+  --cream:               #f5f0e8;
+  --warm-white:          #faf7f2;
+  --silver:              #b0a898;
+
+  /* Typography */
+  --font-display:  'Playfair Display', Georgia, serif;
+  --font-body:     'DM Sans', system-ui, sans-serif;
+
+  /* Layout */
+  --top-bar-height: 52px;
+  --navbar-height:  44px;
+  --header-total:   calc(var(--top-bar-height) + var(--navbar-height) + 4px);
+
+  /* Shadows */
+  --shadow-sm:  0 2px 8px rgba(0,0,0,.15);
+  --shadow-md:  0 4px 20px rgba(0,0,0,.22);
+  --shadow-lg:  0 8px 40px rgba(0,0,0,.28);
+
+  /* Transitions */
+  --transition: 220ms cubic-bezier(.4,0,.2,1);
+}
+
+/* ── Reset & Base ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--dark-charter);
+  background-color: var(--warm-white);
+  /* Pousse le contenu sous le header fixe */
+  padding-top: var(--header-total);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--brown-charter);
+}
+
+a {
+  color: var(--green-charter);
+  transition: color var(--transition);
+}
+a:hover { color: var(--green-light); }

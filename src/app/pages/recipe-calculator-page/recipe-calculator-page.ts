@@ -204,8 +204,8 @@ export class RecipeCalculatorPage implements OnInit {
 
   getInsScore(): number {
     const r = this.recetteCalculee?.resultats?.find(
-      res => res.caracteristique?.nom?.toLowerCase() === 'ins' ||
-             res.caracteristique?.nom?.toLowerCase() === 'indice ins'
+      res => res.caracteristique?.nom?.toLowerCase().includes('ins') ||
+             res.caracteristique?.nom?.toLowerCase().includes('indice ins')
     );
     return r?.score ?? 0;
   }

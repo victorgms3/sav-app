@@ -419,6 +419,8 @@
   padding: 10px 14px;
   border-top: 2px solid #ede5da;
   color: var(--brown-charter, #3b2a1a);
+  /* Pousse le contenu sous le header fixe */
+  padding-top: var(--header-total);
 }
 
 /* ── Résultats ───────────────────────────────────────────── */
@@ -459,6 +461,8 @@
   height: 5px;
   background: #e8e0d6;
   border-radius: 3px;
+  /* Pousse le contenu sous le header fixe */
+  padding-top: var(--header-total);
   overflow: hidden;
   margin-bottom: 5px;
 }

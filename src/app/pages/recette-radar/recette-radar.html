@@ -1,0 +1,44 @@
+<div class="radar-wrap">
+
+  <!-- Canvas Chart.js -->
+  <div class="radar-canvas-wrap">
+    <canvas #radarCanvas></canvas>
+  </div>
+
+  <!-- Légende custom -->
+  <div class="radar-legend">
+    <span class="radar-legend-item">
+      <span class="radar-dot dot-in"></span>Dans la plage
+    </span>
+    <span class="radar-legend-item">
+      <span class="radar-dot dot-below"></span>En dessous
+    </span>
+    <span class="radar-legend-item">
+      <span class="radar-dot dot-above"></span>Au-dessus
+    </span>
+    <span class="radar-legend-item">
+      <span class="radar-line-ideal"></span>Zone idéale
+    </span>
+  </div>
+
+  <!-- Tableau de détails -->
+  <div class="radar-details">
+    @for (pt of points; track pt.key) {
+      <div class="radar-detail-row">
+        <span class="radar-detail-label">{{ pt.label }}</span>
+        <span class="radar-detail-val">{{ pt.rawValue | number:'1.1-2' }}</span>
+        <span class="radar-detail-range">({{ pt.min }}–{{ pt.max }})</span>
+        <span class="radar-status-icon"
+          [class.status-in]="pt.status === 'in'"
+          [class.status-below]="pt.status === 'below'"
+          [class.status-above]="pt.status === 'above'"
+        >
+          @if (pt.status === 'in')    { ✓ }
+          @if (pt.status === 'below') { ↓ }
+          @if (pt.status === 'above') { ↑ }
+        </span>
+      </div>
+    }
+  </div>
+
+</div>

@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Recette, Resultat } from '../../models/recette.model';
 import { RecetteService } from '../../services/Recette.service';
+import { RecetteRadarComponent } from '../recette-radar/recette-radar';
 
 @Component({
   selector: 'app-recipe-manager-page',
   templateUrl: './recipe-manager-page.html',
   styleUrl: './recipe-manager-page.css',
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, RecetteRadarComponent],
 })
 export class RecipeManagerPage implements OnInit {
   public recettes: Recette[] = [];
@@ -115,7 +116,7 @@ export class RecipeManagerPage implements OnInit {
   /** Score INS depuis resultats[] */
   getInsScore(recette: Recette): number {
     const r = recette.resultats?.find(
-      (res) => res.caracteristique?.nom?.toLowerCase() === 'ins'
+      (res) => res.caracteristique?.nom?.toLowerCase().includes('ins')
     );
     return r?.score ?? 0;
   }

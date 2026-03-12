@@ -10,24 +10,23 @@ import { IngredientsManagerPage } from './pages/ingredients-manager-page/ingredi
 import { AboutPage } from './pages/about-page/about-page';
 import { LegalNoticePage } from './pages/legal-notice-page/legal-notice-page';
 export const routes: Routes = [
- // Accès & redirection vers la page home :
- { path: '', pathMatch: 'full', redirectTo: 'home' }, // Route de la racine :
- { path: 'home', component: HomePage },
- // Pages d'authentification :
- { path: 'login', component: LoginPage },
- { path: 'subscribe', component: SubscribePage},
- // Compte utilisateur :
- { path: 'account', component: AccountManagerPage },
- // Recettes :
- { path: 'recipe-calculator', component: RecipeCalculatorPage },
- { path: 'recipe-manager', component: RecipeManagerPage},
- // Administration - Gestion :
- { path: 'users-manager', component: UsersManagerPage },
- { path: 'ingredients-manager', component: IngredientsManagerPage},
- // A propos (redirection vers home en cas d'url invalide):
- { path: "about", component: AboutPage }, // Toujours mis en dernier !
- // Mentions légales :
- {path: "legal-notice", component: LegalNoticePage},
-
-
+  // Accès & redirection vers la page home :
+  { path: '', pathMatch: 'full', redirectTo: 'home' }, // Route de la racine :
+  { path: 'home', component: HomePage },
+  // Pages d'authentification :
+  { path: 'login', component: LoginPage },
+  { path: 'subscribe', component: SubscribePage },
+  // Compte utilisateur :
+  { path: 'account', component: AccountManagerPage },
+  // Recettes :
+  { path: 'recipe-calculator', component: RecipeCalculatorPage },
+  { path: 'recipe-manager', component: RecipeManagerPage },
+  // Administration - Gestion :
+  { path: 'users-manager', component: UsersManagerPage },
+  { path: 'ingredients-manager', component: IngredientsManagerPage },
+  // A propos (redirection vers home en cas d'url invalide):
+  { path: 'about', component: AboutPage }, // Toujours mis en dernier !
+  // Mentions légales :
+  { path: 'legal-notice', component: LegalNoticePage },
+  { path: 'recipe-calculator/:id', component: RecipeCalculatorPage },
 ];

@@ -1,0 +1,113 @@
+/* ============================================================
+   SAVAPP – Recette Radar Component
+   ============================================================ */
+
+.radar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Canvas ──────────────────────────────────────────────── */
+.radar-canvas-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+/* ── Légende ─────────────────────────────────────────────── */
+.radar-legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  font-size: .76rem;
+  color: #6b5e52;
+}
+
+.radar-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.radar-dot {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.15);
+}
+
+.dot-in    { background: #4a7c59; }
+.dot-below { background: #3a7ca5; }
+.dot-above { background: #e8a020; }
+
+.radar-line-ideal {
+  display: inline-block;
+  width: 20px; height: 2px;
+  background: repeating-linear-gradient(
+    to right,
+    rgba(74,124,89,.5) 0, rgba(74,124,89,.5) 4px,
+    transparent 4px, transparent 8px
+  );
+}
+
+/* ── Tableau de détails ──────────────────────────────────── */
+.radar-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 16px;
+  background: #faf7f2;
+  border: 1px solid #ede5da;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.radar-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .8rem;
+}
+
+.radar-detail-label {
+  flex: 1;
+  color: var(--brown-charter, #3b2a1a);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.radar-detail-val {
+  font-weight: 700;
+  color: var(--green-charter, #4a7c59);
+  min-width: 42px;
+  text-align: right;
+}
+
+.radar-detail-range {
+  font-size: .72rem;
+  color: #a09080;
+  white-space: nowrap;
+}
+
+.radar-status-icon {
+  font-size: .8rem;
+  font-weight: 700;
+  min-width: 14px;
+  text-align: center;
+}
+
+.status-in    { color: #4a7c59; }
+.status-below { color: #3a7ca5; }
+.status-above { color: #e8a020; }
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .radar-details {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,1 +1,88 @@
-<p>login-page works!</p>
+<div class="login-container">
+  <div class="login-card">
+
+    <!-- Logo / Titre -->
+    <div class="login-header text-center mb-4">
+      <i class="bi bi-droplet-fill login-icon"></i>
+      <h1 class="login-title">SavApp</h1>
+      <p class="login-subtitle">Connectez-vous à votre espace</p>
+    </div>
+
+    <!-- Erreur -->
+    @if (errorMsg) {
+      <div class="login-alert d-flex align-items-center gap-2 mb-3">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>{{ errorMsg }}</span>
+      </div>
+    }
+
+    <!-- Formulaire -->
+    <div class="login-form">
+
+      <!-- Email -->
+      <div class="login-field mb-3">
+        <label class="login-label" for="email">
+          <i class="bi bi-envelope me-1"></i>Email
+        </label>
+        <input
+          id="email"
+          type="email"
+          class="login-input"
+          [(ngModel)]="email"
+          placeholder="votre@email.com"
+          autocomplete="email"
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="login-field mb-4">
+        <label class="login-label" for="password">
+          <i class="bi bi-lock me-1"></i>Mot de passe
+        </label>
+        <div class="login-input-wrap">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            class="login-input"
+            [(ngModel)]="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            [disabled]="isLoading"
+            (keyup.enter)="onSubmit()"
+          />
+          <button
+            type="button"
+            class="login-eye-btn"
+            (click)="showPassword = !showPassword"
+            title="{{ showPassword ? 'Masquer' : 'Afficher' }}"
+          >
+            <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bouton connexion -->
+      <button
+        type="button"
+        class="login-submit w-100"
+        (click)="onSubmit()"
+        [disabled]="isLoading || !email || !password"
+      >
+        @if (isLoading) {
+          <span class="login-spinner me-2"></span>Connexion…
+        } @else {
+          <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+        }
+      </button>
+
+    </div>
+
+    <!-- Lien inscription -->
+    <p class="login-register text-center mt-4">
+      Pas encore de compte ?
+      <a routerLink="/subscribe" class="login-link">Créer un compte</a>
+    </p>
+
+  </div>
+</div>

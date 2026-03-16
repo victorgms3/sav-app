@@ -9,6 +9,7 @@ import { UsersManagerPage } from './pages/users-manager-page/users-manager-page'
 import { IngredientsManagerPage } from './pages/ingredients-manager-page/ingredients-manager-page';
 import { AboutPage } from './pages/about-page/about-page';
 import { LegalNoticePage } from './pages/legal-notice-page/legal-notice-page';
+import { authGuard } from './guards/auth-guard';
 export const routes: Routes = [
   // Accès & redirection vers la page home :
   { path: '', pathMatch: 'full', redirectTo: 'home' }, // Route de la racine :
@@ -29,4 +30,8 @@ export const routes: Routes = [
   // Mentions légales :
   { path: 'legal-notice', component: LegalNoticePage },
   { path: 'recipe-calculator/:id', component: RecipeCalculatorPage },
+  { path: 'recipe-manager', component: RecipeManagerPage, canActivate: [authGuard] },
+  { path: 'recipe-calculator', component: RecipeCalculatorPage, canActivate: [authGuard] },
+  { path: 'recipe-calculator/:id', component: RecipeCalculatorPage, canActivate: [authGuard] },
+  { path: 'ingredients-manager', component: IngredientsManagerPage, canActivate: [authGuard] },
 ];

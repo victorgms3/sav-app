@@ -1,29 +1,179 @@
+/* ============================================================
+   SAVAPP – Login Page
+   ============================================================ */
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 90vh;
+  min-height: 90vh;
+  padding: 24px;
+  background: linear-gradient(135deg, #f0f7f2 0%, #faf7f2 100%);
 }
 
+/* ── Card ────────────────────────────────────────────────── */
 .login-card {
-  background: var(--white);
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: var(--shadow);
+  background: #fff;
+  padding: 40px 36px;
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.10);
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+  border: 1px solid #ede5da;
 }
 
-button[type="submit"] {
+/* ── En-tête ─────────────────────────────────────────────── */
+.login-header {
+  margin-bottom: 8px;
+}
+
+.login-icon {
+  font-size: 2.8rem;
+  color: var(--green-charter, #4a7c59);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.login-title {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: 2rem;
+  color: var(--brown-charter, #3b2a1a);
+  margin-bottom: 4px;
+}
+
+.login-subtitle {
+  font-size: .875rem;
+  color: #7a7068;
+  margin-bottom: 0;
+}
+
+/* ── Alerte erreur ───────────────────────────────────────── */
+.login-alert {
+  background: #fdf0ee;
+  border: 1.5px solid #e8c4be;
+  border-radius: 8px;
+  color: #8b2e20;
+  padding: 10px 14px;
+  font-size: .875rem;
+}
+
+/* ── Champs ──────────────────────────────────────────────── */
+.login-label {
+  display: block;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--brown-charter, #3b2a1a);
+  margin-bottom: 6px;
+}
+
+.login-input {
   width: 100%;
-  background-color: var(--purple-charter);
-  color: white;
-  padding: 12px;
+  border: 1.5px solid #ddd4c8;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: .9rem;
+  background: #fff;
+  color: var(--brown-charter, #3b2a1a);
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  transition: border-color 200ms, box-shadow 200ms;
+
+  &:focus {
+    outline: none;
+    border-color: var(--green-charter, #4a7c59);
+    box-shadow: 0 0 0 3px rgba(74, 124, 89, .12);
+  }
+
+  &::placeholder { color: #b0a898; }
+  &:disabled { background: #f5f0e8; opacity: .7; cursor: not-allowed; }
+}
+
+/* ── Champ mot de passe avec œil ─────────────────────────── */
+.login-input-wrap {
+  position: relative;
+}
+
+.login-input-wrap .login-input {
+  padding-right: 44px;
+}
+
+.login-eye-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   border: none;
-  border-radius: 5px;
-  font-weight: bold;
+  background: none;
+  color: #a09080;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+  transition: color 180ms;
+
+  &:hover { color: var(--green-charter, #4a7c59); }
 }
 
-button[type="submit"]:hover {
-  opacity: 0.9;
+/* ── Bouton submit ───────────────────────────────────────── */
+.login-submit {
+  background: var(--green-charter, #4a7c59);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 200ms, box-shadow 200ms, transform 150ms;
+
+  &:hover:not(:disabled) {
+    background: var(--green-light, #6aab7c);
+    box-shadow: 0 4px 14px rgba(74, 124, 89, .35);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+  }
+}
+
+/* ── Spinner ─────────────────────────────────────────────── */
+.login-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, .4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: login-spin .7s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes login-spin { to { transform: rotate(360deg); } }
+
+/* ── Lien inscription ────────────────────────────────────── */
+.login-register {
+  font-size: .875rem;
+  color: #7a7068;
+  margin-bottom: 0;
+}
+
+.login-link {
+  color: var(--green-charter, #4a7c59);
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover { text-decoration: underline; }
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 28px 20px;
+    border-radius: 12px;
+  }
+
+  .login-title { font-size: 1.6rem; }
 }

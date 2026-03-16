@@ -1,20 +1,28 @@
-.subscribe-container {
-  display: flex;
-  justify-content: center;
-  padding: 50px 20px;
+/* Réutilise exactement les styles de login-page.css */
+@import '../login-page/login-page.css';
+
+/* Spécificités inscription */
+.login-hint {
+  font-size: .75rem;
+  font-weight: 400;
+  color: #a09080;
+  margin-left: 4px;
 }
 
-.form-grid {
-  background: var(--white);
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: var(--shadow);
-  width: 100%;
-  max-width: 600px;
+.login-input-error {
+  border-color: #c0392b !important;
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, .12) !important;
 }
 
-.form-header {
-  border-bottom: 2px solid var(--beige-light);
-  margin-bottom: 20px;
-  padding-bottom: 10px;
+.login-field-error {
+  font-size: .78rem;
+  color: #c0392b;
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+.login-alert-success {
+  background: #eefaf2;
+  border: 1.5px solid #b2e4c5;
+  color: #1a6e3a;
 }

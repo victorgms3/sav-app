@@ -1,1 +1,112 @@
-<p>subscribe-page works!</p>
+<div class="login-container">
+  <div class="login-card">
+
+    <!-- En-tête -->
+    <div class="login-header text-center mb-4">
+      <i class="bi bi-person-plus-fill login-icon"></i>
+      <h1 class="login-title">Créer un compte</h1>
+      <p class="login-subtitle">Rejoignez SavApp et créez vos recettes</p>
+    </div>
+
+    <!-- Succès -->
+    @if (successMsg) {
+      <div class="login-alert login-alert-success d-flex align-items-center gap-2 mb-3">
+        <i class="bi bi-check-circle-fill"></i>
+        <span>{{ successMsg }}</span>
+      </div>
+    }
+
+    <!-- Erreur -->
+    @if (errorMsg) {
+      <div class="login-alert d-flex align-items-center gap-2 mb-3">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>{{ errorMsg }}</span>
+      </div>
+    }
+
+    <!-- Formulaire -->
+    <div class="login-form">
+
+      <!-- Identifiant -->
+      <div class="login-field mb-3">
+        <label class="login-label" for="identifier">
+          <i class="bi bi-envelope me-1"></i>Email / Identifiant
+        </label>
+        <input
+          id="identifier"
+          type="text"
+          class="login-input"
+          [(ngModel)]="identifier"
+          placeholder="votre@email.com"
+          autocomplete="username"
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="login-field mb-3">
+        <label class="login-label" for="password">
+          <i class="bi bi-lock me-1"></i>Mot de passe
+          <span class="login-hint">(6 caractères minimum)</span>
+        </label>
+        <div class="login-input-wrap">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            class="login-input"
+            [(ngModel)]="password"
+            placeholder="••••••••"
+            autocomplete="new-password"
+            [disabled]="isLoading"
+          />
+          <button type="button" class="login-eye-btn" (click)="showPassword = !showPassword">
+            <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Confirmation -->
+      <div class="login-field mb-4">
+        <label class="login-label" for="confirm">
+          <i class="bi bi-lock-fill me-1"></i>Confirmer le mot de passe
+        </label>
+        <input
+          id="confirm"
+          [type]="showPassword ? 'text' : 'password'"
+          class="login-input"
+          [class.login-input-error]="passwordMismatch"
+          [(ngModel)]="confirm"
+          placeholder="••••••••"
+          autocomplete="new-password"
+          [disabled]="isLoading"
+          (keyup.enter)="onSubmit()"
+        />
+        @if (passwordMismatch) {
+          <p class="login-field-error">Les mots de passe ne correspondent pas.</p>
+        }
+      </div>
+
+      <!-- Bouton -->
+      <button
+        type="button"
+        class="login-submit w-100"
+        (click)="onSubmit()"
+        [disabled]="isLoading || !isFormValid"
+      >
+        @if (isLoading) {
+          <span class="login-spinner me-2"></span>Création en cours…
+        } @else {
+          <i class="bi bi-person-check-fill me-2"></i>Créer mon compte
+        }
+      </button>
+
+    </div>
+
+    <!-- Lien connexion -->
+    <p class="login-register text-center mt-4">
+      Déjà un compte ?
+      <a routerLink="/login" class="login-link">Se connecter</a>
+    </p>
+
+  </div>
+</div>

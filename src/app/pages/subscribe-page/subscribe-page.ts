@@ -12,10 +12,11 @@ import { HttpClient } from '@angular/common/http';
 })
 export class SubscribePage {
 
-  // ── Champs du formulaire ─────────────────────────────────────
-  identifier: string = '';   // email / identifiant
-  password:   string = '';
-  confirm:    string = '';
+  // ── Champs — correspondent exactement à RequeteInscription.kt ─
+  identifier: string = '';   // nom d'utilisateur
+  email:    string = '';   // email
+  password: string = '';
+  confirm:  string = '';
 
   // ── États ────────────────────────────────────────────────────
   isLoading:    boolean = false;
@@ -30,7 +31,8 @@ export class SubscribePage {
     private router: Router
   ) {}
 
-  // ── Validation locale ────────────────────────────────────────
+  // ── Validation ───────────────────────────────────────────────
+
   get passwordMismatch(): boolean {
     return this.confirm.length > 0 && this.password !== this.confirm;
   }
@@ -38,12 +40,14 @@ export class SubscribePage {
   get isFormValid(): boolean {
     return (
       this.identifier.trim().length > 0 &&
+      this.email.trim().length > 0 &&
       this.password.length >= 6 &&
       this.password === this.confirm
     );
   }
 
   // ── Soumission ───────────────────────────────────────────────
+
   onSubmit(): void {
     if (!this.isFormValid) return;
 
@@ -51,21 +55,25 @@ export class SubscribePage {
     this.errorMsg   = '';
     this.successMsg = '';
 
+    // ⚠️ Payload avec les 3 champs attendus par RequeteInscription.kt
     const payload = {
-      identifier: this.identifier.trim(),
-      password:   this.password,
+      username: this.identifier.trim(),
+      email:    this.email.trim(),
+      password: this.password,
     };
 
     this.http.post(this.API_URL, payload).subscribe({
       next: () => {
         this.isLoading  = false;
-        this.successMsg = 'Compte créé ! Vous pouvez vous connecter.';
+        this.successMsg = 'Compte créé ! Redirection vers la connexion…';
         setTimeout(() => this.router.navigate(['/login']), 1500);
       },
       error: (err: any) => {
         this.isLoading = false;
-        if (err.status === 409) {
-          this.errorMsg = 'Cet identifiant est déjà utilisé.';
+        if (err.status === 409 || err.status === 400) {
+          this.errorMsg = 'Nom d\'utilisateur ou email déjà utilisé.';
+        } else if (err.status === 403) {
+          this.errorMsg = 'Accès refusé. Vérifiez la configuration du serveur.';
         } else if (err.status === 0) {
           this.errorMsg = 'Impossible de contacter le serveur.';
         } else {

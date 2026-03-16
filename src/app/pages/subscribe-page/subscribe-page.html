@@ -27,18 +27,34 @@
     <!-- Formulaire -->
     <div class="login-form">
 
-      <!-- Identifiant -->
+      <!-- Nom d'utilisateur -->
       <div class="login-field mb-3">
-        <label class="login-label" for="identifier">
-          <i class="bi bi-envelope me-1"></i>Email / Identifiant
+        <label class="login-label" for="username">
+          <i class="bi bi-person me-1"></i>Nom d'utilisateur
         </label>
         <input
-          id="identifier"
+          id="username"
           type="text"
           class="login-input"
           [(ngModel)]="identifier"
-          placeholder="votre@email.com"
+          placeholder="JohnDoe"
           autocomplete="username"
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <!-- Email -->
+      <div class="login-field mb-3">
+        <label class="login-label" for="email">
+          <i class="bi bi-envelope me-1"></i>Email
+        </label>
+        <input
+          id="email"
+          type="email"
+          class="login-input"
+          [(ngModel)]="email"
+          placeholder="votre@email.com"
+          autocomplete="email"
           [disabled]="isLoading"
         />
       </div>
@@ -65,7 +81,7 @@
         </div>
       </div>
 
-      <!-- Confirmation -->
+      <!-- Confirmation mot de passe -->
       <div class="login-field mb-4">
         <label class="login-label" for="confirm">
           <i class="bi bi-lock-fill me-1"></i>Confirmer le mot de passe

@@ -1,37 +1,21 @@
-.dashboard {
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 20px;
-}
-
-.recipe-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 25px;
-  margin-top: 30px;
-}
-
-.recipe-card {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  border-left: 5px solid var(--green-charter);
-  box-shadow: var(--shadow);
-  transition: transform 0.2s;
-}
-
-.recipe-card:hover {
-  transform: scale(1.02);
-}
-
-.recipe-card h3 {
-  margin-bottom: 5px;
-}
-
-.badge {
+/* Réutilise les styles de recipe-manager-page */
+.badge-role {
   display: inline-block;
-  background: var(--beige-light);
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 20px;
+  margin: 0 2px;
+}
+
+.badge-role-admin {
+  background: #fde8c8;
+  color: #7c4a1a;
+}
+
+.badge-role-user {
+  background: #ddeeff;
+  color: #1a4a7c;
 }

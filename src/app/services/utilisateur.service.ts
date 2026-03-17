@@ -14,7 +14,7 @@ export interface Utilisateur {
 })
 export class UtilisateurService {
 
-  private readonly API_URL = 'http://localhost:8080/api-savon/v1/utilisateurs';
+  private readonly API_URL = 'http://localhost:8080/api-savon/v1/utilisateur';
 
   constructor(private http: HttpClient) {}
 

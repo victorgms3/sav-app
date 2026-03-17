@@ -1,0 +1,87 @@
+/* ============================================================
+   SAVAPP – Account Manager Page
+   ============================================================ */
+
+.account-card {
+  border: 1px solid #ede5da !important;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ffffff 0%, #faf7f2 100%);
+}
+
+.account-avatar {
+  width: 70px;
+  height: 70px;
+  background-color: var(--green-muted, #d4e6d9);
+  color: var(--green-charter, #4a7c59);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: 0 4px 10px rgba(74, 124, 89, 0.15);
+}
+
+.account-title {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: 1.8rem;
+  color: var(--brown-charter, #3b2a1a);
+  margin-bottom: 0;
+}
+
+.account-field {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid #f0ebe4;
+  padding: 12px 16px;
+  border-radius: 10px;
+}
+
+.account-label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: #a09080;
+  margin-bottom: 4px;
+}
+
+/* On réutilise le style de badges de votre users-manager-page */
+.badge-role {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 20px;
+  margin-right: 6px;
+}
+
+.badge-role-admin {
+  background: #fde8c8;
+  color: #7c4a1a;
+}
+
+.badge-role-user {
+  background: #ddeeff;
+  color: #1a4a7c;
+}
+
+/* Bouton de déconnexion spécifique */
+.btn-logout {
+  background-color: #fdf0ee;
+  color: #b83232;
+  border: 1.5px solid #f8c8c8;
+  border-radius: 8px;
+  padding: 8px 24px;
+  font-weight: 600;
+  transition: all 200ms ease;
+}
+
+.btn-logout:hover {
+  background-color: #b83232;
+  color: #ffffff;
+  border-color: #b83232;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(184, 50, 50, 0.2);
+}

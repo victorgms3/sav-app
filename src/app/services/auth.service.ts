@@ -70,8 +70,9 @@ export class AuthService {
   /** Vérifie si l'utilisateur possède un rôle donné (ex: 'ROLE_ADMIN') */
   hasRole(role: string): boolean {
     const decoded = this.getDecodedToken();
-    if (!decoded || !decoded.roles) return false;
-    return decoded.roles.includes(role);
+    if (!decoded || !decoded.role) return false;
+    console.log('Rôles de l\'utilisateur :', decoded.role);
+    return decoded.role.includes(role);
   }
 
   /** Retourne toutes les infos utiles du token décodé */
@@ -80,7 +81,7 @@ export class AuthService {
     if (!decoded) return null;
     return {
       username:   decoded.sub,
-      roles:      decoded.roles || [],
+      roles:      decoded.role || [],
       expiration: new Date(decoded.exp * 1000),  // exp est en secondes Unix
     };
   }

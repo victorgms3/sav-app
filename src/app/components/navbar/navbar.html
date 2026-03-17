@@ -29,9 +29,9 @@
           </a>
         </li>
         <!-- Accès à la page de calcul d'une recette SaF -->
-        <li class="nav-item ">
+        <li class="nav-item">
           <a
-            class="nav-link "
+            class="nav-link"
             routerLink="recipe-calculator"
             routerLinkActive="active"
             title="Calculer une recette de savon"
@@ -53,29 +53,37 @@
           </a>
         </li>
         <!-- Accès gestion des utilisateurs pour l'administrateur -->
-        <li class="nav-item admin-only">
-          <a
-            class="nav-link"
-            routerLink="users-manager"
-            routerLinkActive="active"
-            title="Gérer les utilisateurs"
-          >
-            <i class="bi bi-people-fill"> </i>
-            Utilisateurs
-          </a>
-        </li>
+        @if (authService.isAuthenticated()) {
+          @if (authService.hasRole('ROLE_ADMIN')) {
+            <li class="nav-item admin-only">
+              <a
+                class="nav-link"
+                routerLink="users-manager"
+                routerLinkActive="active"
+                title="Gérer les utilisateurs"
+              >
+                <i class="bi bi-people-fill"> </i>
+                Utilisateurs
+              </a>
+            </li>
+          }
+        }
         <!-- Accès gestion des ingrédients pour l'administrateur -->
-        <li class="nav-item admin-only">
-          <a
-            class="nav-link"
-            routerLink="ingredients-manager"
-            routerLinkActive="active"
-            title="Gérer les ingrédients (corps gras et agentsalcalins)"
-          >
-            <i class="bi bi-collection-fill"> </i>
-            Ingrédients
-          </a>
-        </li>
+        @if (authService.isAuthenticated()) {
+          @if (authService.hasRole('ROLE_ADMIN')) {
+            <li class="nav-item admin-only">
+              <a
+                class="nav-link"
+                routerLink="ingredients-manager"
+                routerLinkActive="active"
+                title="Gérer les ingrédients (corps gras et agentsalcalins)"
+              >
+                <i class="bi bi-collection-fill"> </i>
+                Ingrédients
+              </a>
+            </li>
+          }
+        }
       </ul>
     </div>
   </div>

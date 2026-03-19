@@ -486,3 +486,61 @@
   .rc-resultats-grid { grid-template-columns: 1fr 1fr; }
   .rc-ins-value { font-size: 2.4rem; }
 }
+/* ── Bannière invité ─────────────────────────────────────── */
+.rc-guest-banner {
+  background: #fff8e8;
+  border: 1.5px solid #f0d080;
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+.rc-guest-icon {
+  font-size: 1.4rem;
+  color: #c8960a;
+  flex-shrink: 0;
+}
+
+.rc-guest-title {
+  font-size: .875rem;
+  font-weight: 600;
+  color: #7c5a1a;
+}
+
+.rc-guest-sub {
+  font-size: .78rem;
+  color: #a08030;
+}
+
+.rc-btn-login {
+  background: #7c5a1a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: .82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 200ms;
+  &:hover { background: #5a3e0e; color: #fff; }
+}
+
+/* ── Bouton enregistrer ──────────────────────────────────── */
+.rc-btn-save {
+  background: var(--green-charter, #4a7c59);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: .9rem;
+  font-weight: 600;
+  transition: background 200ms, box-shadow 200ms, transform 150ms;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover:not(:disabled) {
+    background: #3a6347;
+    box-shadow: 0 4px 14px rgba(74,124,89,.4);
+    transform: translateY(-1px);
+  }
+  &:disabled { opacity: .55; cursor: not-allowed; }
+}

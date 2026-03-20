@@ -55,4 +55,8 @@ export class RecetteService {
   deleteAllRecettes(): Observable<void> {
     return this.http.delete<void>(`${this.API_URL_RECETTE}/all`);
   }
+  /** Récupère toutes les recettes de la base de données (Admin uniquement) */
+  getAllRecettesAdmin(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_URL_RECETTE}/all`);
+  }
 }

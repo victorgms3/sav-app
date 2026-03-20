@@ -1,1 +1,289 @@
-<p>admin-recipes-page works!</p>
+<div class="ar-page container-xl py-4">
+
+  <!-- EN-TÊTE -->
+  <div class="ar-page-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+    <div>
+      <h1 class="ar-title mb-0">
+        <i class="bi bi-journals me-2"></i>Toutes les recettes
+      </h1>
+      <p class="ar-subtitle mb-0">
+        {{ filteredRecettes.length }} / {{ recettes.length }} recette{{ recettes.length !== 1 ? 's' : '' }}
+        — Vue administrateur
+      </p>
+    </div>
+    <span class="ar-admin-badge">
+      <i class="bi bi-shield-fill-check me-1"></i>ADMIN
+    </span>
+  </div>
+
+  <!-- BARRE D'OUTILS -->
+  <div class="ar-toolbar d-flex align-items-center gap-3 mb-4 flex-wrap">
+    <div class="ar-search-wrap flex-grow-1">
+      <i class="bi bi-search ar-search-icon"></i>
+      <input type="text" class="ar-search-input"
+        placeholder="Rechercher par titre ou description…"
+        [(ngModel)]="searchTerm" (ngModelChange)="applyFilter()" />
+      @if (searchTerm) {
+        <button class="ar-search-clear" (click)="searchTerm = ''; applyFilter()">
+          <i class="bi bi-x-circle-fill"></i>
+        </button>
+      }
+    </div>
+
+    <select class="ar-select-user" [(ngModel)]="filterUser" (ngModelChange)="applyFilter()">
+      <option value="">Tous les utilisateurs</option>
+      @for (u of utilisateurs; track u) {
+        <option [value]="u">{{ u }}</option>
+      }
+    </select>
+
+    <div class="d-flex gap-2">
+      <button class="ar-sort-btn" [class.active]="sortField === 'proprietaire'" (click)="setSort('proprietaire')" title="Trier par utilisateur">
+        <i class="bi bi-person"></i>
+        @if (sortField === 'proprietaire') {
+          <i class="bi" [class.bi-arrow-up]="sortAsc" [class.bi-arrow-down]="!sortAsc"></i>
+        }
+      </button>
+      <button class="ar-sort-btn" [class.active]="sortField === 'titre'" (click)="setSort('titre')" title="Trier par titre">
+        <i class="bi bi-sort-alpha-down"></i>
+        @if (sortField === 'titre') {
+          <i class="bi" [class.bi-arrow-up]="sortAsc" [class.bi-arrow-down]="!sortAsc"></i>
+        }
+      </button>
+      <button class="ar-sort-btn" [class.active]="sortField === 'ins'" (click)="setSort('ins')" title="Trier par INS">
+        <i class="bi bi-award"></i>
+        @if (sortField === 'ins') {
+          <i class="bi" [class.bi-arrow-up]="sortAsc" [class.bi-arrow-down]="!sortAsc"></i>
+        }
+      </button>
+    </div>
+
+    @if (searchTerm || filterUser) {
+      <button class="ar-btn-reset" (click)="clearFilters()">
+        <i class="bi bi-funnel me-1"></i>Réinitialiser
+      </button>
+    }
+  </div>
+
+  <!-- CHARGEMENT -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="ar-spinner mx-auto mb-3"></div>
+      <p class="text-muted">Chargement des recettes…</p>
+    </div>
+  }
+
+  <!-- ERREUR -->
+  @if (!isLoading && errorMsg) {
+    <div class="ar-alert-error d-flex align-items-center gap-3 p-3 mb-4">
+      <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+      <span>{{ errorMsg }}</span>
+      <button class="btn btn-sm btn-outline-danger ms-auto" (click)="loadRecettes()">
+        <i class="bi bi-arrow-clockwise me-1"></i>Réessayer
+      </button>
+    </div>
+  }
+
+  <!-- TABLEAU -->
+  @if (!isLoading && !errorMsg && filteredRecettes.length > 0) {
+    <div class="ar-table-wrap">
+      <table class="table ar-table mb-0">
+        <thead>
+          <tr>
+            <th class="sortable" (click)="setSort('proprietaire')">
+              <i class="bi bi-person me-1"></i>Utilisateur
+              <i class="bi" [class.bi-arrow-up]="sortField==='proprietaire' && sortAsc"
+                            [class.bi-arrow-down]="sortField==='proprietaire' && !sortAsc"></i>
+            </th>
+            <th class="sortable" (click)="setSort('titre')">
+              Titre
+              <i class="bi" [class.bi-arrow-up]="sortField==='titre' && sortAsc"
+                            [class.bi-arrow-down]="sortField==='titre' && !sortAsc"></i>
+            </th>
+            <th>Description</th>
+            <th class="text-end">Corps gras</th>
+            <th class="text-center sortable" (click)="setSort('surgraissage')">
+              Surgr. %
+              <i class="bi" [class.bi-arrow-up]="sortField==='surgraissage' && sortAsc"
+                            [class.bi-arrow-down]="sortField==='surgraissage' && !sortAsc"></i>
+            </th>
+            <th class="text-center">Alcali</th>
+            <th class="text-center sortable" (click)="setSort('ins')">
+              INS
+              <i class="bi" [class.bi-arrow-up]="sortField==='ins' && sortAsc"
+                            [class.bi-arrow-down]="sortField==='ins' && !sortAsc"></i>
+            </th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (recette of filteredRecettes; track recette.id) {
+            <tr class="ar-table-row" (click)="voirDetail(recette)">
+              <td>
+                <span class="ar-user-pill">
+                  <i class="bi bi-person-circle me-1"></i>
+                  {{ recette.proprietaire.username }}
+                </span>
+              </td>
+              <td class="fw-semibold">{{ recette.titre }}</td>
+              <td class="text-muted ar-desc-cell">{{ recette.description || '—' }}</td>
+              <td class="text-end">{{ getMasseTotal(recette) | number:'1.0-0' }} g</td>
+              <td class="text-center">{{ recette.surgraissage }} %</td>
+              <td class="text-center">
+                <span class="ar-alcali-pill">{{ nomAlcali(recette) }}</span>
+              </td>
+              <td class="text-center">
+                <span [class]="qualiteClass(getInsScore(recette))">
+                  {{ getInsScore(recette) | number:'1.0-1' }}
+                </span>
+              </td>
+              <td class="text-center" (click)="$event.stopPropagation()">
+                <div class="d-flex justify-content-center gap-1">
+                  <a [routerLink]="['/recipe-calculator', recette.id]"
+                     class="ar-action-btn ar-action-edit" title="Modifier">
+                    <i class="bi bi-pencil-fill"></i>
+                  </a>
+                  @if (confirmDeleteId !== recette.id) {
+                    <button class="ar-action-btn ar-action-del" title="Supprimer"
+                            (click)="demanderConfirmation(recette.id, $event)">
+                      <i class="bi bi-trash-fill"></i>
+                    </button>
+                  } @else {
+                    <span class="ar-confirm-inline">
+                      <span class="ar-confirm-txt">Supprimer ?</span>
+                      <button class="ar-action-btn ar-action-confirm"
+                              (click)="confirmerSuppression(recette.id, $event)">
+                        <i class="bi bi-check-lg"></i>
+                      </button>
+                      <button class="ar-action-btn ar-action-cancel"
+                              (click)="annulerSuppression()">
+                        <i class="bi bi-x-lg"></i>
+                      </button>
+                    </span>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- VIDE -->
+  @if (!isLoading && !errorMsg && filteredRecettes.length === 0) {
+    <div class="ar-empty text-center py-5">
+      <i class="bi bi-journals ar-empty-icon d-block mb-3"></i>
+      @if (searchTerm || filterUser) {
+        <p class="ar-empty-title">Aucune recette pour ces filtres</p>
+        <button class="btn ar-btn-secondary" (click)="clearFilters()">Réinitialiser</button>
+      } @else {
+        <p class="ar-empty-title">Aucune recette enregistrée</p>
+      }
+    </div>
+  }
+
+</div>
+
+<!-- MODALE -->
+@if (recetteDetail) {
+  <div class="ar-modal-backdrop" (click)="fermerDetail()">
+    <div class="ar-modal" (click)="$event.stopPropagation()">
+
+      <div class="ar-modal-header">
+        <div>
+          <span class="ar-user-pill-lg mb-1 d-inline-flex">
+            <i class="bi bi-person-circle me-1"></i>
+            {{ recetteDetail.proprietaire.username }}
+          </span>
+          <h2 class="ar-modal-title">{{ recetteDetail.titre }}</h2>
+          <span [class]="qualiteClass(getInsScore(recetteDetail))">
+            INS {{ getInsScore(recetteDetail) | number:'1.0-1' }}
+            — {{ qualiteLabel(getInsScore(recetteDetail)) }}
+          </span>
+        </div>
+        <button class="ar-modal-close" (click)="fermerDetail()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="ar-modal-body">
+        @if (recetteDetail.description) {
+          <p class="ar-modal-desc">{{ recetteDetail.description }}</p>
+        }
+
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-md-3">
+            <div class="ar-modal-stat">
+              <span class="ar-modal-stat-val">{{ getMasseTotal(recetteDetail) | number:'1.0-0' }} g</span>
+              <span class="ar-modal-stat-lbl">Corps gras</span>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="ar-modal-stat">
+              <span class="ar-modal-stat-val">{{ recetteDetail.surgraissage }} %</span>
+              <span class="ar-modal-stat-lbl">Surgraissage</span>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="ar-modal-stat">
+              <span class="ar-modal-stat-val">{{ recetteDetail.qteAlcalin | number:'1.1-1' }} g</span>
+              <span class="ar-modal-stat-lbl">{{ nomAlcali(recetteDetail) }}</span>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="ar-modal-stat">
+              <span class="ar-modal-stat-val">{{ recetteDetail.concentrationAlcalin }} %</span>
+              <span class="ar-modal-stat-lbl">Concentration</span>
+            </div>
+          </div>
+        </div>
+
+        @if ((recetteDetail?.ligneIngredients?.length ?? 0) > 0) {
+          <h5 class="ar-modal-section-title">
+            <i class="bi bi-droplet-half me-2"></i>Corps gras
+          </h5>
+          <table class="table ar-table ar-table-sm mb-0">
+            <thead>
+              <tr>
+                <th>Ingrédient</th>
+                <th class="text-end">%</th>
+                <th class="text-end">Quantité</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (ligne of recetteDetail.ligneIngredients; track $index) {
+                <tr>
+                  <td>{{ ligne.ingredient?.nom ?? '—' }}</td>
+                  <td class="text-end">{{ ligne.pourcentage }} %</td>
+                  <td class="text-end">{{ ligne.quantite | number:'1.1-1' }} g</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+
+      <div class="ar-modal-footer">
+        @if (confirmDeleteId === recetteDetail.id) {
+          <span class="ar-confirm-txt me-2">Confirmer la suppression ?</span>
+          <button class="btn ar-btn-danger me-2"
+                  (click)="confirmerSuppression(recetteDetail.id, $event)">
+            <i class="bi bi-trash-fill me-1"></i>Supprimer
+          </button>
+          <button class="btn ar-btn-secondary" (click)="annulerSuppression()">Annuler</button>
+        } @else {
+          <button class="btn ar-btn-secondary" (click)="fermerDetail()">Fermer</button>
+          <button class="btn ar-btn-danger"
+                  (click)="demanderConfirmation(recetteDetail.id, $event)">
+            <i class="bi bi-trash-fill me-1"></i>Supprimer
+          </button>
+          <a [routerLink]="['/recipe-calculator', recetteDetail.id]" class="btn ar-btn-primary">
+            <i class="bi bi-pencil-fill me-1"></i>Modifier
+          </a>
+        }
+      </div>
+
+    </div>
+  </div>
+}

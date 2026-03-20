@@ -1,13 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Utilisateur } from '../models/utilisateur.model';
 
-/** Modèle utilisateur retourné par l'API */
-export interface Utilisateur {
-  id:         number;
-  identifier: string;   // email / nom d'utilisateur
-  roles:      string[];
-}
 
 @Injectable({
   providedIn: 'root',

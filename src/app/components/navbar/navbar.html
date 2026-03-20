@@ -84,6 +84,21 @@
             </li>
           }
         }
+        @if (authService.isAuthenticated()) {
+          @if (authService.hasRole('ROLE_ADMIN')) {
+            <li class="nav-item admin-only">
+              <a
+                class="nav-link"
+                routerLink="recipes-manager"
+                routerLinkActive="active"
+                title="Gérer les ingrédients (corps gras et agentsalcalins)"
+              >
+                <i class="bi bi-collection-fill"> </i>
+                Recettes
+              </a>
+            </li>
+          }
+        }
       </ul>
     </div>
   </div>

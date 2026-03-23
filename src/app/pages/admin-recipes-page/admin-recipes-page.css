@@ -1,0 +1,164 @@
+/* Conteneur principal */
+.container-xl {
+  background-color: #fdfcfb; /* Fond très légèrement crème pour la chaleur */
+  min-height: 100vh;
+}
+
+/* En-tête de page */
+.rm-page-header {
+  border-bottom: 2px solid var(--green-muted, #e0eee4);
+  padding-bottom: 1.5rem;
+}
+
+.rm-title {
+  font-family: var(--font-display, 'Playfair Display', serif); /* Police élégante pour les titres */
+  font-size: 2.25rem;
+  color: var(--brown-charter, #3b2a1a);
+  font-weight: 700;
+}
+
+.rm-subtitle {
+  color: var(--green-charter, #4a7c59);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* Barre de recherche/filtres */
+.rm-filter-bar {
+  background-color: #ffffff;
+  border: 1px solid #ede5da;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(59, 42, 26, 0.04);
+}
+
+.rm-search-input {
+  border-color: #ede5da;
+  color: #3b2a1a;
+}
+
+.rm-search-input:focus {
+  border-color: var(--green-charter, #4a7c59);
+  box-shadow: 0 0 0 0.2rem rgba(74, 124, 89, 0.15);
+}
+
+/* Wrapper de la liste/tableau */
+.rm-list-wrap {
+  background-color: #ffffff;
+  border: 1px solid #ede5da;
+  border-radius: 12px;
+  overflow: hidden; /* Pour les coins arrondis */
+  box-shadow: 0 4px 15px rgba(59, 42, 26, 0.05);
+}
+
+/* Style de la table */
+.rm-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.rm-table thead th {
+  background-color: #f8f5f0; /* Fond beige très clair pour l'entête */
+  color: #a09080; /* Texte marron doux */
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #ede5da;
+}
+
+.rm-table tbody td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f4f0ea;
+  vertical-align: middle;
+  color: #5c4a38; /* Texte marron foncé */
+}
+
+.rm-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.rm-table tbody tr:hover td {
+  background-color: #fdfbf8; /* Effet de survol très subtil */
+}
+
+/* Colonne Titre (style "Recette") */
+.recipe-title-cell {
+  color: var(--green-charter, #4a7c59);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+/* Colonne Utilisateur (votre demande) */
+.owner-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.owner-avatar {
+  width: 32px;
+  height: 32px;
+  background-color: var(--green-muted, #e0eee4);
+  color: var(--green-charter, #4a7c59);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.owner-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.owner-name {
+  font-weight: 600;
+  color: #3b2a1a;
+}
+
+.owner-email {
+  font-size: 0.8rem;
+  color: #a09080;
+}
+
+/* Badges (surgraissage, soude) */
+.badge-rm {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+}
+
+.badge-surgraissage {
+  background-color: #fdf0ee;
+  color: #b83232; /* Rouge doux */
+}
+
+.badge-soude {
+  background-color: #e8f4fd;
+  color: #1a74b8; /* Bleu doux */
+}
+
+.badge-potasse {
+  background-color: #fff8e6;
+  color: #b8861a; /* Jaune/Orange doux */
+}
+
+/* Spinner et états vides */
+.rm-spinner {
+  border-color: var(--green-muted, #e0eee4);
+  border-top-color: var(--green-charter, #4a7c59);
+}
+
+.rm-state-empty {
+  color: #a09080;
+}
+
+.rm-empty-icon {
+  font-size: 3rem;
+  color: #ede5da;
+}

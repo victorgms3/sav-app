@@ -110,6 +110,15 @@ export class RecipeManagerPage implements OnInit {
       });
     }
   }
+// Supprimer toutes les recettes (optionnel, à activer si besoin)
+  // deleteAllRecettes(): void {
+  //   if (confirm(`Supprimer définitivement les ${this.recettes.length} recettes ? Cette action est irréversible.`)) {
+  //     this.recetteService.deleteAllRecettes().subscribe({
+  //       next: () => this.getRecettes(),
+  //       error: (err: any) => console.error('Erreur suppression totale : ', err),
+  //     });
+  //   }
+  // }
 
   // ── Utilitaires ──────────────────────────────────────────────
 
@@ -132,6 +141,12 @@ export class RecipeManagerPage implements OnInit {
       (r) => r.caracteristique?.nom?.toLowerCase() === nom.toLowerCase()
     );
   }
+/** INS moyen de toutes les recettes */
+  // getAverageIns(): number {
+  //   if (this.recettes.length === 0) return 0;
+  //   const total = this.recettes.reduce((acc, r) => acc + this.getInsScore(r), 0);
+  //   return Math.round(total / this.recettes.length);
+  // }
 
   qualiteLabel(ins: number): string {
     if (ins >= 160) return 'Excellente';

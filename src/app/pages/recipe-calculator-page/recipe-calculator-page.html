@@ -411,6 +411,36 @@
 
     </div><!-- /row -->
 
+    <!-- ══════════════════════════════════════════════
+         TABLEAU DES INGRÉDIENTS LES PLUS UTILISÉS
+    ══════════════════════════════════════════════ -->
+    <!-- @if (!isGuest && ingredientStats.length > 0) {
+      <div class="rc-card mt-5">
+        <div class="rc-card-header">
+          <i class="bi bi-bar-chart-steps me-2"></i>
+          Ingrédients les plus utilisés dans vos recettes
+        </div>
+        <div class="rc-card-body p-0">
+          <table class="table rc-table mb-0">
+            <thead>
+              <tr>
+                <th>Ingrédient</th>
+                <th class="text-end">Occurrences</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (stat of ingredientStats; track stat.nom) {
+                <tr>
+                  <td>{{ stat.nom }}</td>
+                  <td class="text-end fw-semibold">{{ stat.occurrences }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    } -->
+
   }
 
 </div>

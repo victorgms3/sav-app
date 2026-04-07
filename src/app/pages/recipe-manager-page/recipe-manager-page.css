@@ -41,6 +41,23 @@
   }
 }
 
+.rm-btn-danger {
+  background: #c0392b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: .875rem;
+  font-weight: 600;
+  transition: background 200ms, box-shadow 200ms, transform 150ms;
+  &:hover {
+    background: #a93226;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(192,57,43,.35);
+    transform: translateY(-1px);
+  }
+}
+
 .rm-btn-secondary {
   background: transparent;
   color: var(--brown-charter, #3b2a1a);

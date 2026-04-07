@@ -39,6 +39,9 @@ export class RecipeCalculatorPage implements OnInit {
   allIngredients:  Ingredient[] = [];
   recetteCalculee: Recette | null = null;
 
+  /** Statistiques sur les ingrédients */
+  ingredientStats: { nom: string; occurrences: number }[] = [];
+
   // ── États ────────────────────────────────────────────────────
   isLoadingIngredients: boolean = false;
   isLoadingRecette:     boolean = false;
@@ -56,6 +59,8 @@ export class RecipeCalculatorPage implements OnInit {
 
   ngOnInit(): void {
     this.loadIngredients();
+    /** Charge les statistiques des ingrédients si l'utilisateur n'est pas invité */
+    // if (!this.isGuest) { this.loadIngredientStats(); }
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.editId = +id;
@@ -66,6 +71,25 @@ export class RecipeCalculatorPage implements OnInit {
   }
 
   // ── Chargement ───────────────────────────────────────────────
+/**  Charge les statistiques d'utilisation des ingrédients dans les recettes (pour affichage dans la sidebar) 
+  loadIngredientStats(): void {
+    this.recetteService.getRecettes().subscribe({
+      next: (recettes) => {
+        const counts = new Map<string, number>();
+        for (const recette of recettes) {
+          for (const ligne of recette.ligneIngredients) {
+            const nom = ligne.ingredient.nom;
+            counts.set(nom, (counts.get(nom) ?? 0) + 1);
+          }
+        }
+        this.ingredientStats = Array.from(counts.entries())
+          .map(([nom, occurrences]) => ({ nom, occurrences }))
+          .sort((a, b) => b.occurrences - a.occurrences);
+      },
+      error: () => {},
+    });
+  }
+    */
 
   loadIngredients(): void {
     this.isLoadingIngredients = true;
